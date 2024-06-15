@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Stock Charts</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Stock Charts</h1>
+      {% for stock, plot in plots.items() %}
+        <div>
+          <h2>{{ stock }}</h2>
+          <img src="data:image/png;base64,{{ plot }}" alt="{{ stock }} Chart">
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
