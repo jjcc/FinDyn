@@ -5,13 +5,30 @@ import plotly.graph_objs as go
 import plotly.utils
 import json
 from flask_paginate import Pagination, get_page_parameter
-
+from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     # List of stock symbols
     stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'BABA', 'INTC', 'CSCO', 'ADBE']
+    etf = request.args.get('etf', default='SPY')
+
+    file_name = None
+    if etf in SECTOR_ETFS:
+        print('ETF in SPDR:', etf)
+    if etf in ISHARE_SECTOR1_ETF:
+        file_name = f'data/meta/ishare_sector1/{etf}.csv'
+        print('ETF in iShares Sector 1:', etf)
+    if etf in ISHARE_SECTOR2_ETF:
+        file_name = f'data/meta/ishare_sector2/{etf}.csv'
+        print('ETF in iShares Sector 2:', etf)
+    if file_name:
+        df_etf = pd.read_csv(file_name)
+        df_etf.groupby('Exchange').size().reset_index(name='Count')
+        symbols = df_etf['Symbol'].tolist()
+        print('Symbols:', symbols)
+
     
     # Pagination
     page = request.args.get(get_page_parameter(), type=int, default=1)
