@@ -7,15 +7,22 @@
 import unittest
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 import pandas as pd
+import pandas as pd
+import yfinance as yf
+from helper import Helper
 
 
 class TestData(unittest.TestCase):
+    def setUp(self) -> None:
+
+        self.etf = 'IBB'
+        etf = self.etf
+        file_name = f'data/meta/ishare_sector1/{etf}.csv'
+        self.df_etf = pd.read_csv(file_name)
+        self.helper = Helper()
     
     def test_readmeta_empty(self):
-        etf = 'IBB'
-        file_name = f'data/meta/ishare_sector1/{etf}.csv'
-        df_etf = pd.read_csv(file_name)
-
+        df_etf = self.df_etf
         df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
         sum_vip = df_vip['WeightJson'].sum()
 
@@ -27,13 +34,31 @@ class TestData(unittest.TestCase):
                 symbol_list.extend(symbols)
             else:
                 continue
-        print(symbol_list)
+        print(len(symbol_list))
+        #print(symbol_list)
         # filter the df_vip that the column 'Exchange' contains 'NASD' or 'New York'
         df_vip2 = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
         symbol_list2 = df_vip2['Symbol'].tolist()
-        print(symbol_list2)
+        #print(symbol_list2)
         set1 = set(symbol_list)
         set2 = set(symbol_list2)
         # check if the two lists are equal
         self.assertEqual(set1, set2)
-        
+
+
+    def test_retrieve_data(self):
+        df_etf = self.df_etf
+        df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
+        df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+        symbols = df_vip['Symbol'].tolist()
+
+        start, end = self.helper.get_start_end_date(156)
+
+        df_list = {}
+        for i, stock in enumerate(symbols, start=1):
+
+            if i > 10:
+                break
+            df_stk = yf.download(stock, start=start, end=end)
+            df_list[stock] = df_stk
+        self.assertEqual(len(df_list), 10)

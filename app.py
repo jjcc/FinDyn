@@ -10,6 +10,8 @@ from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+# global variables
+global_data = {}
 @app.route('/')
 def index():
     # List of stock symbols
@@ -33,6 +35,7 @@ def index():
         # with filtering, only 1/4 of the data is left, sum of the weight is 88%
         symbols = df_vip['Symbol'].tolist()
         print('Symbols:', symbols)
+        global_data['df_data'] = df_etf
 
     
     # Pagination
@@ -49,18 +52,20 @@ def index():
 def fetch_data(stocks):
     # Dictionary to store stock data
     stock_data = {}
+    df_data = global_data.get('df_data',None)
     
     # Fetch data for each stock and reset the index
     total_stocks = len(stocks)
     
     for i, stock in enumerate(stocks, start=1):
+
         # check if the data is already downloaded
         exist = True
         try:
             df = pd.read_csv(f'data/{stock}.csv', index_col='Date', parse_dates=True)
             # sleep 500ms to simulate the delay
             import time
-            time.sleep(0.5)
+            time.sleep(0.01)
         except FileNotFoundError:
             exist = False
         if not exist:
@@ -69,9 +74,9 @@ def fetch_data(stocks):
         df.reset_index(inplace=True)
         
         # Calculate EMAs
-        df['EMA_5'] = df['Close'].ewm(span=5, adjust=False).mean()
-        df['EMA_13'] = df['Close'].ewm(span=13, adjust=False).mean()
-        df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
+        df['EMA_6'] = df['Close'].ewm(span=6, adjust=False).mean()
+        df['EMA_12'] = df['Close'].ewm(span=12, adjust=False).mean()
+        df['EMA_30'] = df['Close'].ewm(span=30, adjust=False).mean()
         
         stock_data[stock] = df
         
@@ -82,6 +87,16 @@ def fetch_data(stocks):
     # Generate interactive plots with Plotly and convert to JSON
     plots = {}
     for stock, data in stock_data.items():
+        # stock information
+        if df_data is not None:
+            info = df_data[df_data['Symbol'] == stock]
+        else:
+            info = ''
+        if len(info)>0:
+            name = info['Name'].values[0]
+        else:
+            name = stock
+        
         fig = go.Figure()
         
         # Add candlestick chart
@@ -96,23 +111,23 @@ def fetch_data(stocks):
         
         # Add EMA lines
         fig.add_trace(go.Scatter(
-            x=data['Date'], y=data['EMA_5'], mode='lines', name='EMA 5'
+            x=data['Date'], y=data['EMA_6'], mode='lines', name='EMA 6'
         ))
         fig.add_trace(go.Scatter(
-            x=data['Date'], y=data['EMA_13'], mode='lines', name='EMA 13'
+            x=data['Date'], y=data['EMA_12'], mode='lines', name='EMA 12'
         ))
         fig.add_trace(go.Scatter(
-            x=data['Date'], y=data['EMA_50'], mode='lines', name='EMA 50'
+            x=data['Date'], y=data['EMA_30'], mode='lines', name='EMA 30'
         ))
         
         fig.update_layout(
-            title=f'{stock} Stock Price',
+            title=f'{name}',
             xaxis_title='Date',
             yaxis_title='',
-            xaxis_rangeslider_visible=False,
+            xaxis_rangeslider_visible=True,
             showlegend=False,
-            margin=dict(l=20, r=20, t=30, b=20),  # Reduce left and right margins
-            height=300,  # Adjust height
+            margin=dict(l=0, r=0, t=30, b=20),  # Reduce left and right margins
+            height=400,  # Adjust height
             font=dict(size=10)  # Adjust font size
         )
         
