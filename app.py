@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     # List of stock symbols
-    stocks = ['AAPL', 'MSFT', 'GOOGL']
+    stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB', 'TSLA', 'NVDA', 'PYPL', 'ADBE', 'NFLX']
     
     # Dictionary to store stock data
     stock_data = {}
@@ -24,8 +24,8 @@ def index():
         except FileNotFoundError:
             exist = False
         if not exist:
-            stock_data[stock] = yf.download(stock, start='2024-01-01', end='2024-06-01')
-            stock_data[stock].to_csv(f'data/{stock}.csv')
+            df = yf.download(stock, start='2024-01-01', end='2024-06-01')
+            df.to_csv(f'data/{stock}.csv')
         df.reset_index(inplace=True)
         
         # Calculate EMAs
@@ -64,7 +64,7 @@ def index():
         fig.update_layout(
             title=f'{stock} Stock Price',
             xaxis_title='Date',
-            yaxis_title='Price',
+            #yaxis_title='Price',
             xaxis_rangeslider_visible=False
         )
         

@@ -4,22 +4,39 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Stock Charts</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <!-- Include Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
   <body>
     <div class="container">
-      <h1>Stock Charts</h1>
-      {% for stock, plot in plots.items() %}
-        <div>
-          <h2>{{ stock }}</h2>
-          <div id="plotly-div-{{ stock }}"></div>
-          <script type="text/javascript">
-            var plotData = {{ plot|safe }};
-            Plotly.newPlot('plotly-div-{{ stock }}', plotData.data, plotData.layout);
-          </script>
-        </div>
-      {% endfor %}
+      <h1 class="my-4">Stock Charts</h1>
+      <div class="row">
+        {% for stock, plot in plots.items() %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ stock }}</h5>
+                <div id="plotly-div-{{ stock }}"></div>
+              </div>
+            </div>
+          </div>
+          {% if loop.index % 3 == 0 %}
+            </div><div class="row">
+          {% endif %}
+        {% endfor %}
+      </div>
     </div>
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      {% for stock, plot in plots.items() %}
+        var plotData = {{ plot|safe }};
+        Plotly.newPlot('plotly-div-{{ stock }}', plotData.data, plotData.layout);
+      {% endfor %}
+    </script>
   </body>
 </html>
