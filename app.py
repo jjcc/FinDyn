@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask_socketio import SocketIO, emit
 import pandas as pd
 import yfinance as yf
 import plotly.graph_objs as go
@@ -7,6 +8,7 @@ import json
 from flask_paginate import Pagination, get_page_parameter
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 @app.route('/')
 def index():
@@ -39,15 +41,26 @@ def index():
     offset = (page - 1) * per_page
     paginated_stocks = stocks[offset:offset + per_page]
     
+    pagination = Pagination(page=page, total=len(stocks), per_page=per_page, css_framework='bootstrap4')
+
+    return render_template('index.html', stocks=paginated_stocks, etf=etf, pagination=pagination)
+
+@socketio.on('fetch_data')
+def fetch_data(stocks):
     # Dictionary to store stock data
     stock_data = {}
     
     # Fetch data for each stock and reset the index
-    for stock in paginated_stocks:
+    total_stocks = len(stocks)
+    
+    for i, stock in enumerate(stocks, start=1):
         # check if the data is already downloaded
         exist = True
         try:
             df = pd.read_csv(f'data/{stock}.csv', index_col='Date', parse_dates=True)
+            # sleep 500ms to simulate the delay
+            import time
+            time.sleep(0.5)
         except FileNotFoundError:
             exist = False
         if not exist:
@@ -61,6 +74,10 @@ def index():
         df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
         
         stock_data[stock] = df
+        
+        # Send progress update to client
+        progress = int((i / total_stocks) * 100)
+        emit('progress_update', {'progress': progress})
     
     # Generate interactive plots with Plotly and convert to JSON
     plots = {}
@@ -100,10 +117,8 @@ def index():
         )
         
         plots[stock] = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-    pagination = Pagination(page=page, total=len(stocks), per_page=per_page, css_framework='bootstrap4')
-
-    return render_template('index.html', plots=plots, pagination=pagination)
+    
+    emit('data_ready', {'plots': plots})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
