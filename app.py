@@ -7,6 +7,7 @@ import plotly.utils
 import json
 from flask_paginate import Pagination, get_page_parameter
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
+from helper import Helper
 app = Flask(__name__)
 socketio = SocketIO(app)
 
@@ -36,11 +37,12 @@ def index():
         symbols = df_vip['Symbol'].tolist()
         print('Symbols:', symbols)
         global_data['df_data'] = df_etf
+        stocks = symbols
 
     
     # Pagination
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 8
+    per_page = 20
     offset = (page - 1) * per_page
     paginated_stocks = stocks[offset:offset + per_page]
     
@@ -50,6 +52,8 @@ def index():
 
 @socketio.on('fetch_data')
 def fetch_data(stocks):
+    helper = Helper()
+    start, end = helper.get_start_end_date(156)
     # Dictionary to store stock data
     stock_data = {}
     df_data = global_data.get('df_data',None)
@@ -61,16 +65,17 @@ def fetch_data(stocks):
 
         # check if the data is already downloaded
         exist = True
+        price_file = f'data/{stock}_{end}.csv'
         try:
-            df = pd.read_csv(f'data/{stock}.csv', index_col='Date', parse_dates=True)
+            df = pd.read_csv(price_file , index_col='Date', parse_dates=True)
             # sleep 500ms to simulate the delay
             import time
             time.sleep(0.01)
         except FileNotFoundError:
             exist = False
         if not exist:
-            df = yf.download(stock, start='2024-01-01', end='2024-06-01')
-            df.to_csv(f'data/{stock}.csv')
+            df = yf.download(stock, start=start, end=end)
+            df.to_csv(price_file)
         df.reset_index(inplace=True)
         
         # Calculate EMAs
