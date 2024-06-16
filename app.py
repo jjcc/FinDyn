@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     # List of stock symbols
-    stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB', 'TSLA', 'NVDA', 'PYPL', 'ADBE', 'NFLX']
+    stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'PYPL', 'ADBE', 'NFLX']
     
     # Dictionary to store stock data
     stock_data = {}
@@ -62,10 +62,14 @@ def index():
         ))
         
         fig.update_layout(
-            title=f'{stock} Stock Price',
+            #title=f'{stock} Stock Price',
+            title= '',
             xaxis_title='Date',
-            #yaxis_title='Price',
-            xaxis_rangeslider_visible=False
+            yaxis_title='',
+            showlegend=False,
+            margin=dict(l=0, r=0, t=30, b=10),  # Reduce left and right margins
+            height=320,  # Adjust height
+            font=dict(size=8)  # Adjust font size
         )
         
         plots[stock] = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
