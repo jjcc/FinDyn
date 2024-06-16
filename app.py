@@ -31,8 +31,15 @@ def index():
     # Generate interactive plots with Plotly
     plots = {}
     for stock, data in stock_data.items():
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=data.index, y=data['Close'], mode='lines', name=f'{stock} Close Price'))
+        #fig = go.Figure()
+        df = data
+        df.reset_index(inplace=True)
+        fig = go.Figure(data=[go.Candlestick(x=df['Date'],
+                        open=df['Open'],
+                        high=df['High'],
+                        low=df['Low'],
+                        close=df['Close'])])
+        #fig.add_trace(go.Scatter(x=data.index, y=data['Close'], mode='lines', name=f'{stock} Close Price'))
         fig.update_layout(title=f'{stock} Stock Price', xaxis_title='Date', yaxis_title='Close Price')
         img = pio.to_image(fig, format='png')
         plots[stock] = base64.b64encode(img).decode('utf8')
