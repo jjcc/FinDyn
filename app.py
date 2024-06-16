@@ -38,6 +38,7 @@ def index():
         symbols = df_vip['Symbol'].tolist()
         print('Symbols:', symbols)
         global_data['df_data'] = df_etf
+        global_data['etf'] = etf
         stocks = symbols
 
     
@@ -58,6 +59,12 @@ def fetch_data(stocks):
     # Dictionary to store stock data
     stock_data = {}
     df_data = global_data.get('df_data',None)
+    etf = global_data.get('etf',None)
+    # check if the folder f'data/{etf}' exist, if not create it
+    if etf:
+        import os
+        if not os.path.exists(f'data/{etf}'):
+            os.makedirs(f'data/{etf}')
     
     # Fetch data for each stock and reset the index
     total_stocks = len(stocks)
@@ -67,7 +74,10 @@ def fetch_data(stocks):
         # check if the data is already downloaded
         exist = True
         #price_file = f'data/{stock}_{end}.csv'
-        price_file = f'data/{stock}_last.csv'
+        if etf:
+            price_file = f'data/{etf}/{stock}_last.csv'
+        else:
+            price_file = f'data/{stock}_last.csv'
         try:
             df = pd.read_csv(price_file , index_col='Date', parse_dates=True)
             # check the last date
