@@ -25,8 +25,11 @@ def index():
         print('ETF in iShares Sector 2:', etf)
     if file_name:
         df_etf = pd.read_csv(file_name)
-        df_etf.groupby('Exchange').size().reset_index(name='Count')
-        symbols = df_etf['Symbol'].tolist()
+        # filter the data: weight >= 0.2, exchange contains 'NASD' or 'New York'
+        df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
+        df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+        # with filtering, only 1/4 of the data is left, sum of the weight is 88%
+        symbols = df_vip['Symbol'].tolist()
         print('Symbols:', symbols)
 
     

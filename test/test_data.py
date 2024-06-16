@@ -19,12 +19,21 @@ class TestData(unittest.TestCase):
         df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
         sum_vip = df_vip['WeightJson'].sum()
 
-        dg = df_etf.groupby('Exchange')
+        dg = df_vip.groupby('Exchange')
         symbol_list = []
         for i,g  in dg:
             if "NASD" in i or "New York" in i:
                 symbols = g['Symbol'].tolist()  
-                symbol_list.append(symbols)
+                symbol_list.extend(symbols)
             else:
                 continue
         print(symbol_list)
+        # filter the df_vip that the column 'Exchange' contains 'NASD' or 'New York'
+        df_vip2 = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+        symbol_list2 = df_vip2['Symbol'].tolist()
+        print(symbol_list2)
+        set1 = set(symbol_list)
+        set2 = set(symbol_list2)
+        # check if the two lists are equal
+        self.assertEqual(set1, set2)
+        
