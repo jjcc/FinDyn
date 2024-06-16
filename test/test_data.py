@@ -4,6 +4,7 @@
 #The test should check if the function returns the correct count of each exchange.
 #The test should use the sample metadata file provided in the test folder.
 
+import datetime
 import unittest
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 import pandas as pd
@@ -62,3 +63,43 @@ class TestData(unittest.TestCase):
             df_stk = yf.download(stock, start=start, end=end)
             df_list[stock] = df_stk
         self.assertEqual(len(df_list), 10)
+
+
+    def test_complement(self):
+        helper = self.helper
+        start, end = helper.get_start_end_date(156)
+        # Dictionary to store stock data
+    
+        stock = 'AAPL'
+
+        # check if the data is already downloaded
+        exist = True
+        #price_file = f'data/{stock}_{end}.csv'
+        price_file = f'data/{stock}_last.csv'
+        try:
+            df = pd.read_csv(price_file , index_col='Date', parse_dates=True)
+            # check the last date
+            last_date = df.index[-1]
+            # get the end date from the string format of end
+            end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
+            if end_date > last_date:
+                # get the next date of the last date
+                next_of_last = last_date + datetime.timedelta(days=1)
+                df_complement = yf.download(stock, start=next_of_last, end=end)
+                # check overlap between df and df_complement before append
+                overlap = df.index.intersection(df_complement.index)
+                if not overlap.empty:
+                    df_complement = df_complement.loc[~df_complement.index.isin(overlap)]
+                if not df_complement.empty:
+                    # append the complement data to the original data
+                    df = pd.concat([df, df_complement], axis=0)
+                    df.to_csv(price_file)
+            # sleep 10ms to simulate the delay
+            import time
+            time.sleep(0.01)
+        except FileNotFoundError:
+            exist = False
+        if not exist:
+            df = yf.download(stock, start=start, end=end)
+            df.to_csv(price_file)
+        df.reset_index(inplace=True)
