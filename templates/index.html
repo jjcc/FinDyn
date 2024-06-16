@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Stock Charts</title>
+    <!-- Include Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -11,7 +13,11 @@
       {% for stock, plot in plots.items() %}
         <div>
           <h2>{{ stock }}</h2>
-          <img src="data:image/png;base64,{{ plot }}" alt="{{ stock }} Chart">
+          <div id="plotly-div-{{ stock }}"></div>
+          <script type="text/javascript">
+            var plotData = {{ plot|safe }};
+            Plotly.newPlot('plotly-div-{{ stock }}', plotData.data, plotData.layout);
+          </script>
         </div>
       {% endfor %}
     </div>
