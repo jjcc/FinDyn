@@ -103,3 +103,60 @@ class TestData(unittest.TestCase):
             df = yf.download(stock, start=start, end=end)
             df.to_csv(price_file)
         df.reset_index(inplace=True)
+
+    def _getData(self, etf):
+        global_data = {}
+        in_spdr = False
+        if etf in SECTOR_ETFS:
+            in_spdr = True
+            etf_lower = etf.lower()
+            if etf == 'XLSR':
+                return []
+            file_name = f'data/meta/spdr/index-holdings-{etf_lower}.csv'
+            print('ETF in SPDR:', etf)
+        if etf in ISHARE_SECTOR1_ETF:
+            file_name = f'data/meta/ishare_sector1/{etf}.csv'
+            print('ETF in iShares Sector 1:', etf)
+        if etf in ISHARE_SECTOR2_ETF:
+            file_name = f'data/meta/ishare_sector2/{etf}.csv'
+            print('ETF in iShares Sector 2:', etf)
+        if file_name:
+            df_etf = pd.read_csv(file_name)
+            if not in_spdr:
+                # filter the data: weight >= 0.2, exchange contains 'NASD' or 'New York'
+                df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
+                df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+                # with filtering, only 1/4 of the data is left, sum of the weight is 88%
+                symbols = df_vip['Symbol'].tolist()
+                print('Symbols:', symbols)
+                global_data['df_data'] = df_etf
+                global_data['etf'] = etf
+                stocks = symbols
+            else:
+                # SPDR ETF
+                symbols = df_etf['Symbol'].tolist()
+                print('Symbols:', symbols)
+                global_data['df_data'] = None
+                global_data['etf'] = etf
+                stocks = symbols
+
+        return stocks
+
+    
+    def testGetData(self):
+        from app import get_stocks
+        for etf in SECTOR_ETFS:
+            stocks = get_stocks(etf)
+            if etf == 'XLSR':
+                self.assertTrue(len(stocks) == 0)
+                continue
+            self.assertTrue(len(stocks) > 0)
+        for etf in ISHARE_SECTOR1_ETF:
+            stocks = get_stocks(etf)
+            if len(stocks) == 0:
+                assert (etf == 'EUFN')
+                continue
+            self.assertTrue(len(stocks) > 0)
+        for etf in ISHARE_SECTOR2_ETF:
+            stocks = get_stocks(etf)
+            self.assertTrue(len(stocks) > 0)

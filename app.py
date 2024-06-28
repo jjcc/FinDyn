@@ -10,6 +10,7 @@ from flask_paginate import Pagination, get_page_parameter
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 from helper import Helper
 app = Flask(__name__)
+#socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*')
 socketio = SocketIO(app)
 
 # global variables
@@ -19,28 +20,8 @@ def index():
     # List of stock symbols
     stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'BABA', 'INTC', 'CSCO', 'ADBE']
     etf = request.args.get('etf', default='SPY')
-
-    file_name = None
-    if etf in SECTOR_ETFS:
-        print('ETF in SPDR:', etf)
-    if etf in ISHARE_SECTOR1_ETF:
-        file_name = f'data/meta/ishare_sector1/{etf}.csv'
-        print('ETF in iShares Sector 1:', etf)
-    if etf in ISHARE_SECTOR2_ETF:
-        file_name = f'data/meta/ishare_sector2/{etf}.csv'
-        print('ETF in iShares Sector 2:', etf)
-    if file_name:
-        df_etf = pd.read_csv(file_name)
-        # filter the data: weight >= 0.2, exchange contains 'NASD' or 'New York'
-        df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
-        df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
-        # with filtering, only 1/4 of the data is left, sum of the weight is 88%
-        symbols = df_vip['Symbol'].tolist()
-        print('Symbols:', symbols)
-        global_data['df_data'] = df_etf
-        global_data['etf'] = etf
-        stocks = symbols
-
+    if etf != 'SPY':
+        stocks = get_stocks(etf)
     
     # Pagination
     page = request.args.get(get_page_parameter(), type=int, default=1)
@@ -51,6 +32,43 @@ def index():
     pagination = Pagination(page=page, total=len(stocks), per_page=per_page, css_framework='bootstrap4')
 
     return render_template('index.html', stocks=paginated_stocks, etf=etf, pagination=pagination)
+
+def get_stocks(etf):
+    file_name = None
+    in_spdr = False
+    if etf in SECTOR_ETFS:
+        in_spdr = True
+        etf_lower = etf.lower()
+        if etf == 'XLSR':
+            return []
+        file_name = f'data/meta/spdr/index-holdings-{etf_lower}.csv'
+        print('ETF in SPDR:', etf)
+    if etf in ISHARE_SECTOR1_ETF:
+        file_name = f'data/meta/ishare_sector1/{etf}.csv'
+        print('ETF in iShares Sector 1:', etf)
+    if etf in ISHARE_SECTOR2_ETF:
+        file_name = f'data/meta/ishare_sector2/{etf}.csv'
+        print('ETF in iShares Sector 2:', etf)
+    if file_name:
+        df_etf = pd.read_csv(file_name)
+        if not in_spdr:
+            # filter the data: weight >= 0.2, exchange contains 'NASD' or 'New York'
+            df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
+            df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+            # with filtering, only 1/4 of the data is left, sum of the weight is 88%
+            symbols = df_vip['Symbol'].tolist()
+            print('Symbols:', symbols)
+            global_data['df_data'] = df_etf
+            global_data['etf'] = etf
+            stocks = symbols
+        else:
+            # SPDR ETF
+            symbols = df_etf['Symbol'].tolist()
+            print('Symbols:', symbols)
+            global_data['df_data'] = None
+            global_data['etf'] = etf
+            stocks = symbols
+    return stocks
 
 @socketio.on('fetch_data')
 def fetch_data(stocks):
