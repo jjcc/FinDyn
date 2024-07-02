@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from flask_socketio import SocketIO, emit
 import pandas as pd
 import yfinance as yf
@@ -8,6 +8,8 @@ import plotly.utils
 import json
 from flask_paginate import Pagination, get_page_parameter
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
+import io
+
 from helper import Helper
 app = Flask(__name__)
 #socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*')
@@ -157,7 +159,13 @@ def fetch_data(stocks):
             high=data['High'],
             low=data['Low'],
             close=data['Close'],
-            name='Candlesticks'
+            name='Candlesticks',
+            line=dict(width=0.5),
+            whiskerwidth=0.4,
+            increasing_line_color='black',
+            decreasing_line_color='black',
+            increasing_fillcolor='green',
+            decreasing_fillcolor='red'
         ))
         
         # Add EMA lines
@@ -185,6 +193,18 @@ def fetch_data(stocks):
         plots[stock] = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     emit('data_ready', {'plots': plots})
+
+
+@app.route('/download_selected')
+def download_selected():
+    stocks = request.args.get('stocks').split(',')
+    output = io.BytesIO()
+    content = ",".join(stocks)
+    # write the content to the output
+    output.write(content.encode())
+    output.seek(0)
+    return send_file(output, download_name ='selected_stocks.txt', as_attachment=True)
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

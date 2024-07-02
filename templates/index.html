@@ -15,6 +15,7 @@
     <div class="container-fluid">
       <!-- Navigation bar-->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors.html">Sector</a>
         <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors2.html">Sector2</a>
         <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors3.html">Sector3</a>
       </nav>
@@ -30,6 +31,7 @@
           {{ pagination.links }}
         </div>
       </div>
+      <button id="download-button" class="btn btn-primary mt-4">Download Selected</button>
     </div>
 
     <!-- Modals -->
@@ -66,6 +68,8 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <a href="#" data-toggle="modal" data-target="#modal-${stock}">${stock}</a>
+                  <input type="checkbox" class="stock-checkbox" data-stock="${stock}"> select</div>
+    
                 </h5>
                 <div id="plotly-div-${stock}"></div>
               </div>
@@ -110,6 +114,21 @@
       // Fetch stock data
       const stocks = {{ stocks | tojson }};
       socket.emit('fetch_data', stocks);
+
+
+      document.getElementById('download-button').addEventListener('click', function() {
+        const selectedStocks = [];
+        document.querySelectorAll('.stock-checkbox:checked').forEach(function(checkbox) {
+            selectedStocks.push(checkbox.getAttribute('data-stock'));
+        });
+
+        if (selectedStocks.length > 0) {
+            const url = `/download_selected?stocks=${selectedStocks.join(',')}`;
+            window.location.href = url;
+        } else {
+            alert('Please select at least one stock to download.');
+        }
+      });
     </script>
   </body>
 </html>
