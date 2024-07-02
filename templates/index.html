@@ -121,9 +121,12 @@
         document.querySelectorAll('.stock-checkbox:checked').forEach(function(checkbox) {
             selectedStocks.push(checkbox.getAttribute('data-stock'));
         });
+        //get the etf and page
+        const etf = "{{etf}}";
+        const page = "{{pagination.page}}";
 
         if (selectedStocks.length > 0) {
-            const url = `/download_selected?stocks=${selectedStocks.join(',')}`;
+            const url = `/download_selected?stocks=${selectedStocks.join(',')}&etf=${etf}&page=${page}`;
             window.location.href = url;
         } else {
             alert('Please select at least one stock to download.');

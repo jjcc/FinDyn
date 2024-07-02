@@ -198,12 +198,16 @@ def fetch_data(stocks):
 @app.route('/download_selected')
 def download_selected():
     stocks = request.args.get('stocks').split(',')
+    etf = request.args.get('etf')
+    page = request.args.get('page')
+    if page is None or len(page) == 0:
+        page = 1
     output = io.BytesIO()
     content = ",".join(stocks)
     # write the content to the output
     output.write(content.encode())
     output.seek(0)
-    return send_file(output, download_name ='selected_stocks.txt', as_attachment=True)
+    return send_file(output, download_name =f'selected_stocks_{etf}{page}.txt', as_attachment=True)
 
 
 if __name__ == '__main__':
