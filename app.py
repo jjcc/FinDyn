@@ -67,7 +67,7 @@ def get_stocks(etf):
             # SPDR ETF
             symbols = df_etf['Symbol'].tolist()
             print('Symbols:', symbols)
-            global_data['df_data'] = None
+            global_data['df_data'] = df_etf 
             global_data['etf'] = etf
             stocks = symbols
     return stocks
@@ -146,7 +146,12 @@ def fetch_data(stocks):
         else:
             info = ''
         if len(info)>0:
-            name = info['Name'].values[0]
+            if 'Name' in info.columns:
+                name = info['Name'].values[0]
+            elif 'Company Name' in info.columns:
+                name = info['Company Name'].values[0]
+            else:
+                name = stock
         else:
             name = stock
         
@@ -197,6 +202,7 @@ def fetch_data(stocks):
 
 @app.route('/download_selected')
 def download_selected():
+    timenow = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M')
     stocks = request.args.get('stocks').split(',')
     etf = request.args.get('etf')
     page = request.args.get('page')
@@ -207,7 +213,7 @@ def download_selected():
     # write the content to the output
     output.write(content.encode())
     output.seek(0)
-    return send_file(output, download_name =f'selected_stocks_{etf}{page}.txt', as_attachment=True)
+    return send_file(output, download_name =f'selected_stks_{etf}{page}_{timenow}.txt', as_attachment=True)
 
 
 if __name__ == '__main__':
