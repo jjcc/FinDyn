@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.utils
 import json
 from flask_paginate import Pagination, get_page_parameter
-from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
+from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF, INDUSTRY_ETFS
 import io
 
 from helper import Helper
@@ -38,38 +38,46 @@ def index():
 def get_stocks(etf):
     file_name = None
     in_spdr = False
+    group = None
     if etf in SECTOR_ETFS:
         in_spdr = True
+        group = 'spdr'
         etf_lower = etf.lower()
         if etf == 'XLSR':
             return []
         file_name = f'data/meta/spdr/index-holdings-{etf_lower}.csv'
         print('ETF in SPDR:', etf)
     if etf in ISHARE_SECTOR1_ETF:
+        group = 'ishare_sector1'
         file_name = f'data/meta/ishare_sector1/{etf}.csv'
         print('ETF in iShares Sector 1:', etf)
     if etf in ISHARE_SECTOR2_ETF:
+        group = 'ishare_sector2'
         file_name = f'data/meta/ishare_sector2/{etf}.csv'
         print('ETF in iShares Sector 2:', etf)
+    if etf in INDUSTRY_ETFS:
+        group = 'spdr_industry'
+        file_name = f'data/meta/spdr_industry/{etf}.csv'
+        print('ETF in Industry:', etf)
     if file_name:
         df_etf = pd.read_csv(file_name)
-        if not in_spdr:
+        if group in ['ishare_sector1', 'ishare_sector2']:
             # filter the data: weight >= 0.2, exchange contains 'NASD' or 'New York'
             df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
             df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
             # with filtering, only 1/4 of the data is left, sum of the weight is 88%
             symbols = df_vip['Symbol'].tolist()
-            print('Symbols:', symbols)
-            global_data['df_data'] = df_etf
-            global_data['etf'] = etf
-            stocks = symbols
-        else:
+        elif group in ['spdr']:
             # SPDR ETF
             symbols = df_etf['Symbol'].tolist()
-            print('Symbols:', symbols)
-            global_data['df_data'] = df_etf 
-            global_data['etf'] = etf
-            stocks = symbols
+        elif group in ['spdr_industry']:
+            # SPDR Industry ETF
+            symbols = df_etf['Symbol'].tolist()
+        # common for all groups
+        print('Symbols:', symbols)
+        global_data['df_data'] = df_etf 
+        global_data['etf'] = etf
+        stocks = symbols
     return stocks
 
 @socketio.on('fetch_data')
