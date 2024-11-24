@@ -9,15 +9,17 @@
     <!-- Include Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!-- Include Socket.IO -->
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <!--<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
   </head>
   <body>
     <div class="container-fluid">
       <!-- Navigation bar-->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors.html">Sector</a>
-        <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors2.html">Sector2</a>
-        <a class="navbar-brand" href="http://greely.ddns.net/sw/sectors3.html">Sector3</a>
+
+        <a class="navbar-brand" id="sector-link" href="http://greely.ddns.net/sw/sectors.html">Sector</a>
+        <a class="navbar-brand" id="sector2-link" href="http://greely.ddns.net/sw/sectors2.html">Sector2</a>
+        <a class="navbar-brand" id="sector3-link" href="http://greely.ddns.net/sw/sectors3.html">Sector3</a>
       </nav>
       <h1 class="my-4">{{etf}} Stock Charts</h1>
       <div class="progress mb-4">
@@ -44,7 +46,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-      const socket = io();
+        document.addEventListener('DOMContentLoaded', function() {
+          const domain = window.location.hostname;
+          if (domain === '127.0.0.1') {
+            document.getElementById('sector-link').href = '/sectors';
+            document.getElementById('sector2-link').href = '/sectors2';
+            document.getElementById('sector3-link').href = '/sectors3';
+          }
+        });
+      //const socket = io();
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
 
       // Listen for progress updates
       socket.on('progress_update', function(data) {
