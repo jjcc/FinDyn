@@ -9,6 +9,7 @@ import json
 from flask_paginate import Pagination, get_page_parameter
 from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF, INDUSTRY_ETFS
 import io
+import os
 
 from helper import Helper
 app = Flask(__name__)
@@ -92,7 +93,7 @@ def get_stocks(etf):
         stocks = symbols
     return stocks
 
-def _mapping_etf_folder(etf):
+def _mapping_etf_folder(stock, etf):
     # for now return the same value which works as before
     return etf
 
@@ -108,19 +109,20 @@ def fetch_data(stocks):
     etf = global_data.get('etf',None)
     # due to the shared stocks among different ETFs, we need to use alternative variable as folder
     # it needs a mapping beteen etf and folder. There's only one etf will retrieve the data in its folder and shared with other etfs
-    etfx = _mapping_etf_folder(etf)
 
     # check if the folder f'data/{etf}' exist, if not create it
-    if etfx:
-        import os
-        if not os.path.exists(f'data/{etfx}'):
-            os.makedirs(f'data/{etfx}')
+    if etf:
+        if not os.path.exists(f'data/{etf}'):
+            os.makedirs(f'data/{etf}')
     
     # Fetch data for each stock and reset the index
     total_stocks = len(stocks)
     time = datetime.datetime.now()
     print(f'fetch_data mk1 {time}')
     for i, stock in enumerate(stocks, start=1):
+        etfx = _mapping_etf_folder(stock, etf)
+        if not os.path.exists(f'data/{etfx}'):
+            os.makedirs(f'data/{etfx}')
 
         # check if the data is already downloaded
         exist = True
