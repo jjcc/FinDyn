@@ -35,6 +35,18 @@ def index():
 
     return render_template('index.html', stocks=paginated_stocks, etf=etf, pagination=pagination)
 
+@app.route('/sectors')
+def sectors():
+    return render_template('sectors.html')
+
+@app.route('/sectors2')
+def sectors2():
+    return render_template('sectors2.html')
+
+@app.route('/sectors3')
+def sectors3():
+    return render_template('sectors3.html')
+
 def get_stocks(etf):
     file_name = None
     in_spdr = False
@@ -80,30 +92,41 @@ def get_stocks(etf):
         stocks = symbols
     return stocks
 
+def _mapping_etf_folder(etf):
+    # for now return the same value which works as before
+    return etf
+
 @socketio.on('fetch_data')
 def fetch_data(stocks):
+    time = datetime.datetime.now()
+    print(f'fetch_data mk0 {time}')
     helper = Helper()
     start, end = helper.get_start_end_date(156)
     # Dictionary to store stock data
     stock_data = {}
     df_data = global_data.get('df_data',None)
     etf = global_data.get('etf',None)
+    # due to the shared stocks among different ETFs, we need to use alternative variable as folder
+    # it needs a mapping beteen etf and folder. There's only one etf will retrieve the data in its folder and shared with other etfs
+    etfx = _mapping_etf_folder(etf)
+
     # check if the folder f'data/{etf}' exist, if not create it
-    if etf:
+    if etfx:
         import os
-        if not os.path.exists(f'data/{etf}'):
-            os.makedirs(f'data/{etf}')
+        if not os.path.exists(f'data/{etfx}'):
+            os.makedirs(f'data/{etfx}')
     
     # Fetch data for each stock and reset the index
     total_stocks = len(stocks)
-    
+    time = datetime.datetime.now()
+    print(f'fetch_data mk1 {time}')
     for i, stock in enumerate(stocks, start=1):
 
         # check if the data is already downloaded
         exist = True
         #price_file = f'data/{stock}_{end}.csv'
         if etf:
-            price_file = f'data/{etf}/{stock}_last.csv'
+            price_file = f'data/{etfx}/{stock}_last.csv'
         else:
             price_file = f'data/{stock}_last.csv'
         try:
@@ -144,7 +167,8 @@ def fetch_data(stocks):
         # Send progress update to client
         progress = int((i / total_stocks) * 100)
         emit('progress_update', {'progress': progress})
-    
+    time = datetime.datetime.now()
+    print(f'fetch_data mk2 {time}')
     # Generate interactive plots with Plotly and convert to JSON
     plots = {}
     for stock, data in stock_data.items():
@@ -204,7 +228,8 @@ def fetch_data(stocks):
         )
         
         plots[stock] = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
+    time = datetime.datetime.now()
+    print(f'fetch_data mk3 {time}')
     emit('data_ready', {'plots': plots})
 
 
@@ -225,4 +250,5 @@ def download_selected():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
+    #socketio.run(app, debug=True, port=8000)
