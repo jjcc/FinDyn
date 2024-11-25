@@ -5,8 +5,9 @@
 #The test should use the sample metadata file provided in the test folder.
 
 import datetime
+import json
 import unittest
-from constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
+from constant import INDUSTRY_ETFS, SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 import pandas as pd
 import pandas as pd
 import yfinance as yf
@@ -67,10 +68,10 @@ class TestData(unittest.TestCase):
 
     def test_complement(self):
         helper = self.helper
-        start, end = helper.get_start_end_date(156)
+        start, end = helper.get_start_end_date(300)
         # Dictionary to store stock data
     
-        stock = 'AAPL'
+        stock = 'AVGO'
 
         # check if the data is already downloaded
         exist = True
@@ -160,3 +161,79 @@ class TestData(unittest.TestCase):
         for etf in ISHARE_SECTOR2_ETF:
             stocks = get_stocks(etf)
             self.assertTrue(len(stocks) > 0)
+    
+    def test_walkdir(self):
+        import os
+        file_by_dir = {}
+        for root, dirs, files in os.walk('data'):
+            if root == 'data':
+                continue
+            if root == 'data/meta':
+                continue
+            print(root)
+            file_by_dir[root] = files
+
+        set_of_files = set()
+        duplicates = []
+        for k,v in file_by_dir.items():
+            for file in v:
+                if file in set_of_files:
+                    print(f'Duplicate files in different directories, file name: {file}, folder name: {k}')
+                    dup = f'{k}/{file}'
+                    duplicates.append(dup)
+                else:
+                    set_of_files.add(file)
+        self.assertTrue(len(file_by_dir) > 0)
+
+    def test_duplicates(self):
+        '''
+        generate a symbol map to record duplicated symbols in different ETFs
+        '''
+        sectors = [SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF,INDUSTRY_ETFS]
+        sector_folders = ['spdr', 'ishare_sector1', 'ishare_sector2','spdr_industry']
+        folder_to_sector = dict(zip(sector_folders, sectors))
+        base_dir = 'data/meta'
+
+        # build a structure that reduce the duplicated stocks
+        map_info = {}
+
+        for etf_folder in sector_folders:
+            curr_folder = etf_folder
+            etfs = folder_to_sector[curr_folder]
+            for etf in etfs:
+                if curr_folder == 'spdr':
+                    if etf == 'XLSR':
+                        continue
+                    file_name = f'{base_dir}/{curr_folder}/index-holdings-{etf.lower()}.csv'
+                else:
+                    file_name = f'{base_dir}/{curr_folder}/{etf}.csv'
+                try:
+                    df = pd.read_csv(file_name)
+                except FileNotFoundError:
+                    print(f'File not found: {file_name}')
+                    continue
+                symbols = df['Symbol'].tolist()
+                # check all the symbols in the map_info
+                for s in symbols:
+                    if s in map_info:
+                        map_info[s][False].append(etf) 
+                        print(f'Duplicate symbol: {s} in {etf}')
+                    else:
+                        map_info[s] = { True: etf, False: []}
+        with open("symbol_map.json", "w") as f:
+            json.dump(map_info, f)
+
+    def _map_etf_folder(self, stock,etf):
+        with open("data/meta/symbol_map.json", "r") as f:
+            symbol_map = json.load(f)
+        assert stock in symbol_map
+        etf_first = symbol_map[stock]['true']
+        etfs = symbol_map[stock]['false']
+        return etf_first, etfs
+        
+
+    def test_symbol_map(self):
+        stock = 'AAPL'
+        etf = 'XLK'
+        etf_first, etfs = self._map_etf_folder(stock,etf)
+        print(f"Symbol: {stock}, ETF: {etf_first}, Duplicates: {etfs}")

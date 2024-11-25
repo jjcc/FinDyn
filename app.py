@@ -18,6 +18,8 @@ socketio = SocketIO(app)
 
 # global variables
 global_data = {}
+with open("data/meta/symbol_map.json", "r") as f:
+    symbol_map = json.load(f)
 @app.route('/')
 def index():
     # List of stock symbols
@@ -95,7 +97,9 @@ def get_stocks(etf):
 
 def _mapping_etf_folder(stock, etf):
     # for now return the same value which works as before
-    return etf
+    etf_first = symbol_map[stock]['true']
+    etfs = symbol_map[stock]['false']
+    return etf_first, etfs
 
 @socketio.on('fetch_data')
 def fetch_data(stocks):
@@ -120,13 +124,13 @@ def fetch_data(stocks):
     time = datetime.datetime.now()
     print(f'fetch_data mk1 {time}')
     for i, stock in enumerate(stocks, start=1):
-        etfx = _mapping_etf_folder(stock, etf)
+        etfx, _ = _mapping_etf_folder(stock, etf)
         if not os.path.exists(f'data/{etfx}'):
             os.makedirs(f'data/{etfx}')
 
         # check if the data is already downloaded
         exist = True
-        #price_file = f'data/{stock}_{end}.csv'
+        #>price_file = f'data/{stock}_{end}.csv'
         if etf:
             price_file = f'data/{etfx}/{stock}_last.csv'
         else:
@@ -137,6 +141,12 @@ def fetch_data(stocks):
             last_date = df.index[-1]
             # get the end date from the string format of end
             end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
+            # if end_date is weekend, get the previous friday
+            if end_date.weekday() == 5:
+                end_date = end_date - datetime.timedelta(days=1)
+            elif end_date.weekday() == 6:
+                end_date = end_date - datetime.timedelta(days=2) 
+            print(f'adjusted end_date {end_date} and last_date {last_date}')
             if end_date > last_date:
                 # get the next date of the last date
                 next_of_last = last_date + datetime.timedelta(days=1)
@@ -152,6 +162,8 @@ def fetch_data(stocks):
             # sleep 10ms to simulate the delay
             import time
             time.sleep(0.01)
+        except IndexError:
+            continue
         except FileNotFoundError:
             exist = False
         if not exist:
