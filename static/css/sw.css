@@ -1,0 +1,38 @@
+.sector{
+    padding-bottom: 20px;
+}
+
+#sticky_panel{
+    position: sticky;
+    top:80px;
+    width:350px;
+    padding:20px;
+    background: lightblue;
+    text-align: center;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main,
+.sidebar {
+  border: 3px solid black;
+  padding: 15px;
+  background-color: #fff;
+}
+
+.main {
+  width: 80%;
+}
+
+.sidebar {
+  width: 20%;
+  height: 125vh;
+}
+
+body {
+  background-color: #ccc;
+  font-family: sans-serif;
+}
