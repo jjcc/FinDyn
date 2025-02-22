@@ -16,10 +16,46 @@
             "args": [
                 "run",
                 "--no-debugger",
+                "--no-reload",
+                "--port=8000"  // Add this line to specify the port
+            ],
+            "jinja": true,
+            "autoStartBrowser": false
+        },
+        {
+            "name": "Python Debugger: Flask 2",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app2.py",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
                 "--no-reload"
             ],
             "jinja": true,
             "autoStartBrowser": false
-        }
+        },
+        {
+            "name": "Python Debugger: Flask diag",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app_diag.py",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--port=8000"  // Add this line to specify the port
+            ],
+            "jinja": true,
+            "autoStartBrowser": false
+        },
     ]
 }

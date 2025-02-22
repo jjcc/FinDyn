@@ -146,11 +146,11 @@ def fetch_data(stocks):
                 end_date = end_date - datetime.timedelta(days=1)
             elif end_date.weekday() == 6:
                 end_date = end_date - datetime.timedelta(days=2) 
-            print(f'adjusted end_date {end_date} and last_date {last_date}')
+            print(f'adjusted end_date {end_date} and last_date {last_date} for {stock}')
             if end_date > last_date:
                 # get the next date of the last date
                 next_of_last = last_date + datetime.timedelta(days=1)
-                df_complement = yf.download(stock, start=next_of_last, end=end)
+                df_complement = yf.download(stock, start=next_of_last, end=end, multi_level_index=False)
                 # check overlap between df and df_complement before append
                 overlap = df.index.intersection(df_complement.index)
                 if not overlap.empty:
