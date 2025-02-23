@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, send_from_directory
 from flask_socketio import SocketIO, emit
 import pandas as pd
 import yfinance as yf
@@ -12,9 +12,33 @@ import io
 import os
 
 from helper import Helper
-app = Flask(__name__)
+from src.utils.data_utils import fetch_stock_data, generate_plots
+
+# Create a custom static folder handler
+def static_folder_handler(app):
+    @app.route('/vendor/<path:filename>')
+    def vendor_static(filename):
+        return send_from_directory('static/vendor', filename)
+
+    @app.route('/css/<path:filename>')
+    def css_static(filename):
+        return send_from_directory('static/css', filename)
+
+    @app.route('/js/<path:filename>')
+    def js_static(filename):
+        return send_from_directory('static/js', filename)
+
+    @app.route('/image/<path:filename>')
+    def image_static(filename):
+        return send_from_directory('image', filename)
+
+#app = Flask(__name__, static_folder='static', template_folder='templates')
+app = Flask(__name__, static_folder='static')
 #socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*')
 socketio = SocketIO(app)
+
+# Register static folder handlers
+static_folder_handler(app)
 
 # global variables
 global_data = {}
@@ -102,6 +126,83 @@ def _mapping_etf_folder(stock, etf):
     return etf_first, etfs
 
 @socketio.on('fetch_data')
+def fetch_data2(stocks):
+    df_data = global_data.get('df_data',None)
+    stock_data = fetch_stock_data(stocks, socketio, symbol_map)
+    plots = generate_plots(stock_data, df_data)
+    emit('data_ready', {'plots': plots})
+
+
+#@socketio.on('fetch_data')
+def fetch_data3(stocks):
+    df_data = global_data.get('df_data',None)
+    stock_data = fetch_stock_data(stocks, socketio, symbol_map)
+    time = datetime.datetime.now()
+    print(f'fetch_data mk2 {time}')
+    # Generate interactive plots with Plotly and convert to JSON
+    plots = {}
+    for stock, data in stock_data.items():
+        # stock information
+        if df_data is not None:
+            info = df_data[df_data['Symbol'] == stock]
+        else:
+            info = ''
+        if len(info)>0:
+            if 'Name' in info.columns:
+                name = info['Name'].values[0]
+            elif 'Company Name' in info.columns:
+                name = info['Company Name'].values[0]
+            else:
+                name = stock
+        else:
+            name = stock
+        
+        fig = go.Figure()
+        
+        # Add candlestick chart
+        fig.add_trace(go.Candlestick(
+            x=data['Date'],
+            open=data['Open'],
+            high=data['High'],
+            low=data['Low'],
+            close=data['Close'],
+            name='Candlesticks',
+            line=dict(width=0.5),
+            whiskerwidth=0.4,
+            increasing_line_color='black',
+            decreasing_line_color='black',
+            increasing_fillcolor='green',
+            decreasing_fillcolor='red'
+        ))
+        
+        # Add EMA lines
+        fig.add_trace(go.Scatter(
+            x=data['Date'], y=data['EMA_6'], mode='lines', name='EMA 6'
+        ))
+        fig.add_trace(go.Scatter(
+            x=data['Date'], y=data['EMA_12'], mode='lines', name='EMA 12'
+        ))
+        fig.add_trace(go.Scatter(
+            x=data['Date'], y=data['EMA_30'], mode='lines', name='EMA 30'
+        ))
+        
+        fig.update_layout(
+            title=f'{name}',
+            xaxis_title='Date',
+            yaxis_title='',
+            xaxis_rangeslider_visible=True,
+            showlegend=False,
+            margin=dict(l=0, r=0, t=30, b=20),  # Reduce left and right margins
+            height=400,  # Adjust height
+            font=dict(size=10)  # Adjust font size
+        )
+        
+        plots[stock] = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    time = datetime.datetime.now()
+    print(f'fetch_data mk3 {time}')
+    emit('data_ready', {'plots': plots})
+
+#@socketio.on('fetch_data')
 def fetch_data(stocks):
     time = datetime.datetime.now()
     print(f'fetch_data mk0 {time}')
