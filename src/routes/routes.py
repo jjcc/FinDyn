@@ -3,7 +3,6 @@ from flask import render_template, request, send_file
 from flask_socketio import emit
 from flask_paginate import Pagination, get_page_parameter
 from ..constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF, INDUSTRY_ETFS
-from ..helper import Helper
 from ..utils.data_utils import fetch_stock_data, generate_plots
 import pandas as pd
 import json
