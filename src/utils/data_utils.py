@@ -4,6 +4,7 @@ import pandas as pd
 from ..services.stock_service import StockService
 
 def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict) -> Dict[str, str]:
+    ## TODO: develop new stock fetching function based on database
     """Fetch and process stock data for multiple stocks"""
     stock_service = StockService(symbol_map)
     helper = Helper()
@@ -35,6 +36,64 @@ def generate_plots(stock_data: Dict[str, pd.DataFrame], df_data: pd.DataFrame) -
         plots[stock] = plot_json
         
     return plots
+
+
+def get_sp500_stocks():
+    """Get S&P 500 stocks"""
+    import requests
+    from bs4 import BeautifulSoup
+    
+    # URL to scrape
+    url = "https://stockanalysis.com/list/sp-500-stocks/"
+    
+    # Fetch the page content
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise Exception(f"Failed to load page {url}")
+    
+    # Parse the HTML content
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    # Find the table containing the stocks information.
+    # This example assumes there is a <table> element on the page.
+    table = soup.find("table")
+    if not table:
+        raise Exception("Could not find the stocks table on the page.")
+    
+    # Extract table headers
+    headers = []
+    thead = table.find("thead")
+    if thead:
+        for th in thead.find_all("th"):
+            headers.append(th.get_text(strip=True))
+    else:
+        # If there's no thead, try the first row of tbody as headers.
+        first_row = table.find("tr")
+        if first_row:
+            headers = [th.get_text(strip=True) for th in first_row.find_all(["th", "td"])]
+    
+    # Extract table rows from tbody
+    rows = []
+    tbody = table.find("tbody")
+    if tbody:
+        for tr in tbody.find_all("tr"):
+            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+            if cells:
+                rows.append(cells)
+    else:
+        # Fall back: extract rows from all tr elements excluding the header row if no tbody is present.
+        for tr in table.find_all("tr")[1:]:
+            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+            if cells:
+                rows.append(cells)
+    
+    # Create a DataFrame from the scraped data
+    df = pd.DataFrame(rows, columns=headers)
+    #print(df)
+    
+    return df
+    
+
 
 class Helper:
     def get_start_end_date(self, days: int) -> Tuple[str, str]:
