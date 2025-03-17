@@ -13,6 +13,8 @@
 CREATE TABLE stock_info (
     symbol TEXT PRIMARY KEY,
     is_etf BOOLEAN,
+    is_sp500 BOOLEAN,
+    is_sp1500 BOOLEAN,
     name TEXT,
     group TEXT,
 );

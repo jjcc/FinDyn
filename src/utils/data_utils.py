@@ -1,9 +1,15 @@
-import datetime
+from datetime import datetime
+import os
+import sqlite3
 from typing import Dict, List, Tuple
 import pandas as pd
 from ..services.stock_service import StockService
 import yfinance as yf
 from typing import Dict, List, Union, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
+db = os.getenv('DB_PATH')
 
 def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict) -> Dict[str, str]:
     ## TODO: develop new stock fetching function based on database
@@ -175,9 +181,61 @@ def get_data_by_list(symbols: List[str],
             else:
                 print("Warning: Expected multiple symbols but received single dataset")
                 
-        return data_by_symbol
+        return data_by_symbol ,data
     except Exception as e:
         raise Exception(f"Error processing data: {str(e)}")
+        
+def get_symbols(count:int,start:int = 0)->List[str]:
+    conn = sqlite3.connect('stock_info.db')
+    sql = f"SELECT symbol FROM stock_info LIMIT {start}, {count}"
+
+    df = pd.read_sql(sql, conn)
+    conn.close()
+    return df['symbol'].tolist()
+
+
+def get_symbols_by_page(is_sp500=True, page_length = 100) -> List[str]:
+    """
+    Retrieve the list of S&P 500 stock symbols from the database.
+    
+    Returns:
+        List of S&P 500 stock symbols
+    """
+    db = os.getenv('DB_PATH')
+    conn = sqlite3.connect(db)
+    if is_sp500:
+        sql = "SELECT symbol FROM stock_info WHERE is_sp500 = 1"
+    else:
+        sql = "SELECT symbol FROM stock_info WHERE is_sp500 = 0 AND is_sp1500 = 1"
+    df = pd.read_sql(sql, conn)
+    conn.close()
+    all_list =df['symbol'].tolist()
+    # replace any symbol with '.' with '-'
+    all_list = [symbol.replace('.','-') for symbol in all_list]
+    # segment the list into pages
+    page_list = { i: all_list[i:i + page_length] for i in range(0, len(all_list), page_length)}
+    return page_list
+
+def act_on_stock_list(slist:List[str],action_callback, start_date='2024-06-01',end_date='2025-03-01',save=False) -> None:
+    try:
+        # Use realistic date range (past data)
+        #symbols = ['AAPL', 'GOOGL']
+        time_start = datetime.now()
+        symbols = slist
+        
+        print(f"Downloading data for {symbols} from {start_date} to {end_date}")
+        data_by_symbol, all_data = get_data_by_list(symbols, start_date, end_date)
+        if save:
+            today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+            all_data.to_csv(f'{today}_stock_data.csv')
+        time_end = datetime.now()
+        print(f"Time taken: {time_end - time_start} for {len(slist)} symbols")
+        # get the df for each symbol and call the action callback 
+        for symbol, df in data_by_symbol.items():
+            action_callback(symbol,df)
+    except Exception as e:
+        print(f"Test failed: {str(e)}")
+
 
 def test():
     symbols = ['AAPL', 'GOOGL']

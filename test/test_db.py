@@ -113,4 +113,19 @@ class TestDb(unittest.TestCase):
             else:
                 seen.add(item)
         return list(duplicates)
+    
+    def test_mark_sp500(self):
+        # get the sp500 list
+        df = pd.read_csv("output/sp500_stocks.csv")
+        sp500_list = df['Symbol'].tolist()
+        for symbol in sp500_list:
+            self.cursor.execute("UPDATE stock_info SET is_sp500 = 1 WHERE symbol = ?", (symbol,))
+        self.conn.commit()
+        pass
+    
+    def test_select_list(self):
+        self.cursor.execute("SELECT * FROM stock_info where is_sp1500 = 1 and is_sp500 = 0")
+        rows = self.cursor.fetchall()
+        print(len(rows))
+
 
