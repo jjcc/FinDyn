@@ -138,9 +138,43 @@ def get_data(ticker_symbols: Union[str, List[str]],
         raise Exception(f"Error downloading data: {str(e)}")
 
 
+def organize_data_by_symbol(data: pd.DataFrame, 
+                           symbols: List[str]) -> Dict[str, pd.DataFrame]:
+    """
+    Organize combined stock data into separate DataFrames by symbol.
+    
+    Args:
+        data: Combined DataFrame with stock data for multiple symbols
+        symbols: List of ticker symbols to extract
+        
+    Returns:
+        Dictionary mapping each symbol to its corresponding DataFrame
+    """
+    data_by_symbol = {}
+    
+    # Check if we have multiple symbols
+    if isinstance(data.columns, pd.MultiIndex):
+        # For multiple symbols, extract data for each symbol
+        for symbol in symbols:
+            try:
+                # Get data for single symbol and flatten the MultiIndex
+                df_single = data.xs(symbol, level=1, axis=1)
+                data_by_symbol[symbol] = df_single
+            except KeyError:
+                print(f"Warning: No data found for symbol {symbol}")
+    else:
+        # For single symbol (when only one symbol is valid)
+        if len(symbols) == 1:
+            data_by_symbol[symbols[0]] = data
+        else:
+            print("Warning: Expected multiple symbols but received single dataset")
+            
+    return data_by_symbol
+
+
 def get_data_by_list(symbols: List[str], 
                      start_date: str, 
-                     end_date: str) -> Dict[str, pd.DataFrame]:
+                     end_date: str) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame]:
     """
     Download and organize stock data by individual symbols.
     
@@ -150,7 +184,9 @@ def get_data_by_list(symbols: List[str],
         end_date: End date in 'YYYY-MM-DD' format
         
     Returns:
-        Dictionary mapping each symbol to its corresponding DataFrame
+        Tuple containing:
+            - Dictionary mapping each symbol to its corresponding DataFrame
+            - Original combined DataFrame with all symbols
         
     Raises:
         ValueError: If symbols is not a list or is empty
@@ -158,30 +194,16 @@ def get_data_by_list(symbols: List[str],
     """
     if not isinstance(symbols, list) or not symbols:
         raise ValueError("Symbols must be a non-empty list")
-        
+    
     try:
         # Download data for all symbols
-        data = get_data(symbols, start_date, end_date)
-        data_by_symbol = {}
+        all_data = get_data(symbols, start_date, end_date)
         
-        # Check if we have multiple symbols
-        if isinstance(data.columns, pd.MultiIndex):
-            # For multiple symbols, extract data for each symbol
-            for symbol in symbols:
-                try:
-                    # Get data for single symbol and flatten the MultiIndex
-                    df_single = data.xs(symbol, level=1, axis=1)
-                    data_by_symbol[symbol] = df_single
-                except KeyError:
-                    print(f"Warning: No data found for symbol {symbol}")
-        else:
-            # For single symbol (when only one symbol is valid)
-            if len(symbols) == 1:
-                data_by_symbol[symbols[0]] = data
-            else:
-                print("Warning: Expected multiple symbols but received single dataset")
-                
-        return data_by_symbol ,data
+        # Organize data by symbol
+        data_by_symbol = organize_data_by_symbol(all_data, symbols)
+        
+        return data_by_symbol, all_data
+        
     except Exception as e:
         raise Exception(f"Error processing data: {str(e)}")
         
@@ -224,7 +246,8 @@ def act_on_stock_list(slist:List[str],action_callback, start_date='2024-06-01',e
         symbols = slist
         
         print(f"Downloading data for {symbols} from {start_date} to {end_date}")
-        data_by_symbol, all_data = get_data_by_list(symbols, start_date, end_date)
+        all_data = get_data(symbols, start_date, end_date)
+        data_by_symbol = organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
             all_data.to_csv(f'{today}_stock_data.csv')
