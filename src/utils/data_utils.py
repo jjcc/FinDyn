@@ -23,7 +23,7 @@ def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict) -> Dict[str,
     
     for i, stock in enumerate(stocks, start=1):
         # Fetch and process stock data
-        df = stock_service.get_stock_data(stock, None, start, end)
+        df = stock_service.get_stock_data_old(stock, None, start, end) #This is the old method not using multi_level index
         df = stock_service.calculate_emas(df)
         stock_data[stock] = df
         

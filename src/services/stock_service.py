@@ -11,8 +11,11 @@ class StockService:
     def __init__(self, symbol_map: Dict):
         self.symbol_map = symbol_map
         
-    def get_stock_data(self, stock: str, etf: str, start: str, end: str) -> pd.DataFrame:
-        """Fetch stock data from yfinance or local cache"""
+    def get_stock_data_old(self, stock: str, etf: str, start: str, end: str) -> pd.DataFrame:
+        """
+        Fetch stock data from yfinance or local cache
+        The compatible function to get stock data from yfinance. It put multi_level_index to False
+        """
         etfx, _ = self._mapping_etf_folder(stock, etf)
         if not os.path.exists(f'data/{etfx}'):
             os.makedirs(f'data/{etfx}')
