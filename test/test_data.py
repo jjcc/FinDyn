@@ -11,7 +11,8 @@ from constant import INDUSTRY_ETFS, SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECT
 import pandas as pd
 import pandas as pd
 import yfinance as yf
-from helper import Helper
+#from helper import Helper
+from src.utils.data_utils import Helper
 
 
 class TestData(unittest.TestCase):

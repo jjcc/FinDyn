@@ -7,7 +7,6 @@ from constant import INDUSTRY_ETFS, SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECT
 import pandas as pd
 import pandas as pd
 import yfinance as yf
-from helper import Helper
 from src.utils.data_utils import get_sp500_stocks
 
 
@@ -18,7 +17,6 @@ class TestInvestigate(unittest.TestCase):
         etf = self.etf
         file_name = f'data/meta/ishare_sector1/{etf}.csv'
         self.df_etf = pd.read_csv(file_name)
-        self.helper = Helper()
     
     def test_get_sp500_stocks(self):
         df = get_sp500_stocks()
