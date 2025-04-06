@@ -182,8 +182,16 @@ def test():
         print(df_single.head())
 
 class Helper:
-    def get_start_end_date(self, days: int) -> Tuple[str, str]:
+    def get_start_end_date_old(self, days: int) -> Tuple[str, str]:
         """Calculate start and end dates for stock data"""
         end = datetime.datetime.now()
         start = end - datetime.timedelta(days=days)
         return start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d')
+
+    def get_start_end_date(self, days=156):
+        today = pd.Timestamp.today()
+        today_str = today.strftime('%Y-%m-%d')
+        # 180 ago
+        start_date = today - pd.DateOffset(days=days)
+        start_date_str = start_date.strftime('%Y-%m-%d')
+        return start_date_str, today_str   
