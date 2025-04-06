@@ -13,7 +13,7 @@ from numpy import save
 import pandas as pd
 import yfinance as yf
 from typing import Dict, List, Union, Optional
-from src.services.stock_service import StockService, organize_data_by_symbol
+from src.services.stock_service import StockService
 from src.utils.data_utils import  act_on_stock_list, get_symbols_by_page
 from dotenv import load_dotenv
 
@@ -42,7 +42,7 @@ def test() -> None:
         symbols = slist
         stock_service = StockService({})
         all_data = stock_service.get_data(symbols, start_date, end_date)
-        data_by_symbol = organize_data_by_symbol(all_data, symbols)
+        data_by_symbol = stock_service.organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
             all_data.to_csv(f'{today}_stock_data.csv')
@@ -64,7 +64,8 @@ def test_get_saved_data() -> None:
     symbols = df.columns.get_level_values(1).unique()
     print(f"Symbols: {symbols}")
 
-    data_by_symbol = organize_data_by_symbol(df, symbols)
+    stock_service = StockService({})
+    data_by_symbol = stock_service.organize_data_by_symbol(df, symbols)
     print(data_by_symbol.keys())
     for symbol in symbols:
         df_single = data_by_symbol[symbol]
@@ -87,5 +88,5 @@ def action_save_csv(symbol,df):
     print(f"Data saved to {file_name}")    
 
 if __name__ == '__main__':
-    test()
-    #test_get_saved_data()
+    #test()
+    test_get_saved_data()

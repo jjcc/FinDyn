@@ -4,8 +4,6 @@ import sqlite3
 from typing import Dict, List, Tuple
 import pandas as pd
 
-from src.services.stock_service import organize_data_by_symbol
-
 from ..services.stock_service import StockService
 from typing import Dict, List
 from dotenv import load_dotenv
@@ -132,7 +130,7 @@ def get_data_by_list(symbols: List[str],
         all_data = stock_service.get_data(symbols, start_date, end_date)
         
         # Organize data by symbol
-        data_by_symbol = organize_data_by_symbol(all_data, symbols)
+        data_by_symbol = stock_service.organize_data_by_symbol(all_data, symbols)
         
         return data_by_symbol, all_data
         
@@ -180,7 +178,7 @@ def act_on_stock_list(slist:List[str],action_callback, start_date='2024-06-01',e
         print(f"Downloading data for {symbols} from {start_date} to {end_date}")
         stock_service = StockService({})
         all_data = stock_service.get_data(symbols, start_date, end_date)
-        data_by_symbol = organize_data_by_symbol(all_data, symbols)
+        data_by_symbol = stock_service.organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
             all_data.to_csv(f'{today}_stock_data.csv')
