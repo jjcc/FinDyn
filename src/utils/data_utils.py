@@ -4,6 +4,8 @@ import sqlite3
 from typing import Dict, List, Tuple
 import pandas as pd
 
+from src.services.stock_service import organize_data_by_symbol
+
 from ..services.stock_service import StockService
 from typing import Dict, List
 from dotenv import load_dotenv
@@ -100,40 +102,6 @@ def get_sp500_stocks():
     #print(df)
     
     return df
-
-def organize_data_by_symbol(data: pd.DataFrame, 
-                           symbols: List[str]) -> Dict[str, pd.DataFrame]:
-    """
-    Organize combined stock data into separate DataFrames by symbol.
-    
-    Args:
-        data: Combined DataFrame with stock data for multiple symbols
-        symbols: List of ticker symbols to extract
-        
-    Returns:
-        Dictionary mapping each symbol to its corresponding DataFrame
-    """
-    data_by_symbol = {}
-    
-    # Check if we have multiple symbols
-    if isinstance(data.columns, pd.MultiIndex):
-        # For multiple symbols, extract data for each symbol
-        for symbol in symbols:
-            try:
-                # Get data for single symbol and flatten the MultiIndex
-                df_single = data.xs(symbol, level=1, axis=1)
-                data_by_symbol[symbol] = df_single
-            except KeyError:
-                print(f"Warning: No data found for symbol {symbol}")
-    else:
-        # For single symbol (when only one symbol is valid)
-        if len(symbols) == 1:
-            data_by_symbol[symbols[0]] = data
-        else:
-            print("Warning: Expected multiple symbols but received single dataset")
-            
-    return data_by_symbol
-
 
 def get_data_by_list(symbols: List[str], 
                      start_date: str, 

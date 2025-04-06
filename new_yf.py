@@ -13,8 +13,8 @@ from numpy import save
 import pandas as pd
 import yfinance as yf
 from typing import Dict, List, Union, Optional
-from src.services.stock_service import StockService
-from src.utils.data_utils import  act_on_stock_list, get_symbols_by_page, organize_data_by_symbol
+from src.services.stock_service import StockService, organize_data_by_symbol
+from src.utils.data_utils import  act_on_stock_list, get_symbols_by_page
 from dotenv import load_dotenv
 
 load_dotenv()
