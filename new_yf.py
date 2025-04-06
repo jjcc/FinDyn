@@ -13,7 +13,7 @@ from numpy import save
 import pandas as pd
 import yfinance as yf
 from typing import Dict, List, Union, Optional
-from src.services.stock_service import get_data
+from src.services.stock_service import StockService
 from src.utils.data_utils import  act_on_stock_list, get_symbols_by_page, organize_data_by_symbol
 from dotenv import load_dotenv
 
@@ -31,8 +31,8 @@ def test() -> None:
     """
     page_length = 200
     page_list = get_symbols_by_page(page_length=page_length)
-    start_date = '2024-03-21'
-    end_date = '2025-03-21'
+    start_date = '2024-04-04'
+    end_date = '2025-04-04'
     save = False
     action_callback = action_save_csv
     for page_start, slist in page_list.items():
@@ -40,7 +40,8 @@ def test() -> None:
         #act_on_stock_list(slist,action_print,start_date,end_date,True)
         #act_on_stock_list(slist,action_save_csv,start_date,end_date,True)
         symbols = slist
-        all_data = get_data(symbols, start_date, end_date)
+        stock_service = StockService({})
+        all_data = stock_service.get_data(symbols, start_date, end_date)
         data_by_symbol = organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
@@ -86,5 +87,5 @@ def action_save_csv(symbol,df):
     print(f"Data saved to {file_name}")    
 
 if __name__ == '__main__':
-    #test()
-    test_get_saved_data()
+    test()
+    #test_get_saved_data()

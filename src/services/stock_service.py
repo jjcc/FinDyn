@@ -1,4 +1,3 @@
-from datetime import datetime
 import pandas as pd
 import yfinance as yf
 import plotly.graph_objs as go
@@ -119,38 +118,38 @@ class StockService:
         return etf_first, etfs
 
 
-def get_data(ticker_symbols: Union[str, List[str]],
-             start_date: str,
-             end_date: str) -> pd.DataFrame:
-    """
-    Download historical stock data from Yahoo Finance.
-
-    Args:
-        ticker_symbols: A string or list of ticker symbols to download data for
-        start_date: Start date in 'YYYY-MM-DD' format
-        end_date: End date in 'YYYY-MM-DD' format
-
-    Returns:
-        DataFrame containing the historical price data
-
-    Raises:
-        ValueError: If date format is invalid
-        Exception: If data download fails
-    """
-    try:
-        # Validate date formats
+    def get_data(self, ticker_symbols: Union[str, List[str]],
+                 start_date: str,
+                 end_date: str) -> pd.DataFrame:
+        """
+        Download historical stock data from Yahoo Finance.
+    
+        Args:
+            ticker_symbols: A string or list of ticker symbols to download data for
+            start_date: Start date in 'YYYY-MM-DD' format
+            end_date: End date in 'YYYY-MM-DD' format
+    
+        Returns:
+            DataFrame containing the historical price data
+    
+        Raises:
+            ValueError: If date format is invalid
+            Exception: If data download fails
+        """
         try:
-            datetime.strptime(start_date, '%Y-%m-%d')
-            datetime.strptime(end_date, '%Y-%m-%d')
-        except ValueError:
-            raise ValueError("Dates must be in 'YYYY-MM-DD' format")
-
-        # Download data
-        data = yf.download(ticker_symbols, start=start_date, end=end_date)
-
-        if data.empty:
-            print(f"Warning: No data found for the specified symbols and date range")
-
-        return data
-    except Exception as e:
-        raise Exception(f"Error downloading data: {str(e)}")
+            # Validate date formats
+            try:
+                datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            except ValueError:
+                raise ValueError("Dates must be in 'YYYY-MM-DD' format")
+    
+            # Download data
+            data = yf.download(ticker_symbols, start=start_date, end=end_date)
+    
+            if data.empty:
+                print(f"Warning: No data found for the specified symbols and date range")
+    
+            return data
+        except Exception as e:
+            raise Exception(f"Error downloading data: {str(e)}")

@@ -4,9 +4,8 @@ import sqlite3
 from typing import Dict, List, Tuple
 import pandas as pd
 
-from src.services.stock_service import get_data
 from ..services.stock_service import StockService
-from typing import Dict, List, Union, Optional
+from typing import Dict, List
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -159,9 +158,10 @@ def get_data_by_list(symbols: List[str],
     if not isinstance(symbols, list) or not symbols:
         raise ValueError("Symbols must be a non-empty list")
     
-    try:
+    try: 
         # Download data for all symbols
-        all_data = get_data(symbols, start_date, end_date)
+        stock_service = StockService({})
+        all_data = stock_service.get_data(symbols, start_date, end_date)
         
         # Organize data by symbol
         data_by_symbol = organize_data_by_symbol(all_data, symbols)
@@ -210,7 +210,8 @@ def act_on_stock_list(slist:List[str],action_callback, start_date='2024-06-01',e
         symbols = slist
         
         print(f"Downloading data for {symbols} from {start_date} to {end_date}")
-        all_data = get_data(symbols, start_date, end_date)
+        stock_service = StockService({})
+        all_data = stock_service.get_data(symbols, start_date, end_date)
         data_by_symbol = organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
