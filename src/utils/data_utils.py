@@ -168,27 +168,7 @@ def get_symbols_by_page(is_sp500=True, page_length = 100) -> List[str]:
     page_list = { i: all_list[i:i + page_length] for i in range(0, len(all_list), page_length)}
     return page_list
 
-def act_on_stock_list(slist:List[str],action_callback, start_date='2024-06-01',end_date='2025-03-01',save=False) -> None:
-    try:
-        # Use realistic date range (past data)
-        #symbols = ['AAPL', 'GOOGL']
-        time_start = datetime.now()
-        symbols = slist
-        
-        print(f"Downloading data for {symbols} from {start_date} to {end_date}")
-        stock_service = StockService({})
-        all_data = stock_service.get_data(symbols, start_date, end_date)
-        data_by_symbol = stock_service.organize_data_by_symbol(all_data, symbols)
-        if save:
-            today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-            all_data.to_csv(f'{today}_stock_data.csv')
-        time_end = datetime.now()
-        print(f"Time taken: {time_end - time_start} for {len(slist)} symbols")
-        # get the df for each symbol and call the action callback 
-        for symbol, df in data_by_symbol.items():
-            action_callback(symbol,df)
-    except Exception as e:
-        print(f"Test failed: {str(e)}")
+
 
 
 def test():

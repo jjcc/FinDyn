@@ -11,10 +11,8 @@ import os
 import sqlite3
 from numpy import save
 import pandas as pd
-import yfinance as yf
-from typing import Dict, List, Union, Optional
 from src.services.stock_service import StockService
-from src.utils.data_utils import  act_on_stock_list, get_symbols_by_page
+from src.utils.data_utils import  get_symbols_by_page
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -37,8 +35,6 @@ def test() -> None:
     action_callback = action_save_csv
     for page_start, slist in page_list.items():
         print(f"Page {page_start}: {slist}")
-        #act_on_stock_list(slist,action_print,start_date,end_date,True)
-        #act_on_stock_list(slist,action_save_csv,start_date,end_date,True)
         symbols = slist
         stock_service = StockService({})
         all_data = stock_service.get_data(symbols, start_date, end_date)
