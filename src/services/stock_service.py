@@ -120,7 +120,7 @@ class StockService:
 
     def get_data(self, ticker_symbols: Union[str, List[str]],
                  start_date: str,
-                 end_date: str) -> pd.DataFrame:
+                 end_date: str, interval='1d') -> pd.DataFrame:
         """
         Download historical stock data from Yahoo Finance.
     
@@ -145,7 +145,7 @@ class StockService:
                 raise ValueError("Dates must be in 'YYYY-MM-DD' format")
     
             # Download data
-            data = yf.download(ticker_symbols, start=start_date, end=end_date)
+            data = yf.download(ticker_symbols, start=start_date, end=end_date, interval=interval, rounding=True)
     
             if data.empty:
                 print(f"Warning: No data found for the specified symbols and date range")

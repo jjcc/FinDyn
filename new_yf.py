@@ -18,26 +18,44 @@ from dotenv import load_dotenv
 load_dotenv()
 db = os.getenv('DB_PATH')
 
+# action callback functions
+def action_print(symbol,df):
+    print(f"\nPrice data for {symbol}:")
+    print(df.head())
+    print(f"Shape: {df.shape}")
+
+def action_save_csv(symbol,df):
+    output_dir = os.getenv('PRICE_INFO_FOLDER')
+    file_name = f"{symbol}_data.csv"
+    file_name = os.path.join(output_dir, file_name)
+    df.to_csv(file_name)
+    print(f"Data saved to {file_name}")    
+
+def action_save_csv2(symbol,df):
+    output_dir = os.getenv('PRICE_INFO_FOLDER')
+    file_name = f"{symbol}_5m_data.csv" #Should use parameter in future
+    file_name = os.path.join(output_dir, file_name)
+    df.to_csv(file_name)
+    print(f"Data saved to {file_name}")    
 
 
 
-
-def test() -> None:
+def test(start_date='2024-04-04',end_date = '2025-04-04',
+         action_callback = action_save_csv , interval = '1d' ) -> None:
     """
     Test function demonstrating how to use the module.
     Downloads and displays  or saves the price data for a list of stock symbols.
     """
     page_length = 200
     page_list = get_symbols_by_page(page_length=page_length)
-    start_date = '2024-04-04'
-    end_date = '2025-04-04'
+
     save = False
-    action_callback = action_save_csv
+    #action_callback = action_save_csv
     for page_start, slist in page_list.items():
         print(f"Page {page_start}: {slist}")
         symbols = slist
         stock_service = StockService({})
-        all_data = stock_service.get_data(symbols, start_date, end_date)
+        all_data = stock_service.get_data(symbols, start_date, end_date, interval=interval)
         data_by_symbol = stock_service.organize_data_by_symbol(all_data, symbols)
         if save:
             today = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
@@ -65,24 +83,21 @@ def test_get_saved_data() -> None:
     print(data_by_symbol.keys())
     for symbol in symbols:
         df_single = data_by_symbol[symbol]
+        # for testing action_save_csv2 function
+        #action_save_csv2(symbol, df_single)
         print(df_single.head())
 
 
 
             
 
-def action_print(symbol,df):
-    print(f"\nPrice data for {symbol}:")
-    print(df.head())
-    print(f"Shape: {df.shape}")
-
-def action_save_csv(symbol,df):
-    output_dir = os.getenv('PRICE_INFO_FOLDER')
-    file_name = f"{symbol}_data.csv"
-    file_name = os.path.join(output_dir, file_name)
-    df.to_csv(file_name)
-    print(f"Data saved to {file_name}")    
 
 if __name__ == '__main__':
-    #test()
-    test_get_saved_data()
+    start_date = '2025-04-01'
+    end_date = '2025-04-04'
+    interval = '5m'
+    test(start_date=start_date, end_date=end_date,
+         action_callback=action_save_csv2, interval=interval)
+    #test_get_saved_data()
+
+
