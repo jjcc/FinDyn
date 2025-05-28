@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 db = os.getenv('DB_PATH')
 
-def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict) -> Dict[str, str]:
+def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict, test = False) -> Dict[str, str]:
     ## TODO: develop new stock fetching function based on database
     """Fetch and process stock data for multiple stocks"""
     stock_service = StockService(symbol_map)
@@ -29,7 +29,8 @@ def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict) -> Dict[str,
         
         # Send progress update
         progress = int((i / total_stocks) * 100)
-        socketio.emit('progress_update', {'progress': progress})
+        if not test:
+            socketio.emit('progress_update', {'progress': progress})
     
     return stock_data
 
@@ -190,8 +191,11 @@ class Helper:
 
     def get_start_end_date(self, days=156):
         today = pd.Timestamp.today()
-        today_str = today.strftime('%Y-%m-%d')
+        # add 1 day to today to include today in the range
+        # the yfinance has parameter of [start, end), so extra day is needed
+        today_ex = today + pd.DateOffset(days=1)
+        today_ex_str = today_ex.strftime('%Y-%m-%d')
         # 180 ago
         start_date = today - pd.DateOffset(days=days)
         start_date_str = start_date.strftime('%Y-%m-%d')
-        return start_date_str, today_str   
+        return start_date_str, today_ex_str   

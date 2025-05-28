@@ -6,13 +6,14 @@
 
 import datetime
 import json
+import socket
 import unittest
 from constant import INDUSTRY_ETFS, SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF
 import pandas as pd
 import pandas as pd
 import yfinance as yf
 #from helper import Helper
-from src.utils.data_utils import Helper
+from src.utils.data_utils import Helper, fetch_stock_data
 
 
 class TestData(unittest.TestCase):
@@ -146,7 +147,6 @@ class TestData(unittest.TestCase):
 
     
     def testGetData(self):
-        from app import get_stocks
         for etf in SECTOR_ETFS:
             stocks = get_stocks(etf)
             if etf == 'XLSR':
@@ -238,3 +238,12 @@ class TestData(unittest.TestCase):
         etf = 'XLK'
         etf_first, etfs = self._map_etf_folder(stock,etf)
         print(f"Symbol: {stock}, ETF: {etf_first}, Duplicates: {etfs}")
+    
+    def test_fetch_data(self):
+        with open("data/meta/symbol_map.json", "r") as f:
+            symbol_map = json.load(f)
+        stocks = ['AAPL', 'GOOGL', 'MSFT']
+        socketio = None  # Assuming socketio is not used in this test
+        data = fetch_stock_data(stocks, socketio, symbol_map, test=True)
+        # save the data to a csv file
+        assert len(data) > 0
