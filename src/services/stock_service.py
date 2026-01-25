@@ -6,6 +6,7 @@ import json
 import datetime
 import os
 from typing import Dict, List, Tuple, Union
+from ..config import Config
 
 class StockService:
     def __init__(self, symbol_map: Dict):
@@ -17,10 +18,11 @@ class StockService:
         The compatible function to get stock data from yfinance. It put multi_level_index to False
         """
         etfx, _ = self._mapping_etf_folder(stock, etf)
-        if not os.path.exists(f'data/{etfx}'):
-            os.makedirs(f'data/{etfx}')
+        data_folder = f'{Config.DATA_FOLDER}/{etfx}'
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
 
-        price_file = f'data/{etfx}/{stock}_last.csv'
+        price_file = f'{data_folder}/{stock}_last.csv'
         
         try:
             df = pd.read_csv(price_file, index_col='Date', parse_dates=True)
@@ -56,9 +58,8 @@ class StockService:
 
     def calculate_emas(self, df: pd.DataFrame) -> pd.DataFrame:
         """Calculate EMA indicators for stock data"""
-        df['EMA_6'] = df['Close'].ewm(span=6, adjust=False).mean()
-        df['EMA_12'] = df['Close'].ewm(span=12, adjust=False).mean()
-        df['EMA_30'] = df['Close'].ewm(span=30, adjust=False).mean()
+        for period in Config.EMA_PERIODS:
+            df[f'EMA_{period}'] = df['Close'].ewm(span=period, adjust=False).mean()
         return df
 
     def generate_plot(self, stock: str, data: pd.DataFrame, info: pd.DataFrame) -> str:

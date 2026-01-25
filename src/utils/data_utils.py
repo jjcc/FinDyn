@@ -7,16 +7,17 @@ import pandas as pd
 from ..services.stock_service import StockService
 from typing import Dict, List
 from dotenv import load_dotenv
+from ..config import Config
 
 load_dotenv()
-db = os.getenv('DB_PATH')
+db = Config.DB_PATH
 
 def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict, test = False) -> Dict[str, str]:
     ## TODO: develop new stock fetching function based on database
     """Fetch and process stock data for multiple stocks"""
     stock_service = StockService(symbol_map)
     helper = Helper()
-    start, end = helper.get_start_end_date(156)
+    start, end = helper.get_start_end_date(Config.DEFAULT_DATA_RANGE)
     
     stock_data = {}
     total_stocks = len(stocks)
