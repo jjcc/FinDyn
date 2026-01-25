@@ -164,3 +164,4 @@ node_modules/
 # Configuration files that shouldn't be committed
 config.ini
 settings.json
+image/
