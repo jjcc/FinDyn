@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Stock Image</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/thumbnail-gallery.css" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114998708-1"></script>
+    <script>
+  window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+        gtag('config', 'UA-114998708-1');
+    </script>
+   <style>
+	td>img {
+		
+		width:360px;
+	}
+
+    td>img:hover{
+        overflow:visible
+    }
+	
+    .cs{
+        overflow:hidden;
+        width:300px;/*change this to whatever you want*/
+        height:150px;/*change this to whatever you want*/
+
+        /*Of course, to get the desired effect, the size of the image "<img>" below must be larger than the size mentioned above*/
+    }
+
+    .cs{
+        overflow:visible
+    }
+	
+	.container img {
+		width: 100%;
+	}
+    .sizebar {
+        background-color:greenyellow;
+        display:inline-block;
+        height:10px;
+    }
+	</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sectors</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Sec/Ind/Sb
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors2">SPDR 2
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors3">Sector 3
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">数据服务</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">联络我们</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- Page Content -->
+<div class="container">
+    <div class="row text-center text-lg-center m-4">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+        <h1 class="text-center">SPDR Sector ETF</h1>
+        </div>
+        <div class="col-lg-4"></div>
+    </div>
+    <div class="row text-center text-lg-left">
+        <!-- SPDR -->
+        <div class="col-md-4 sector" id="xlc"><b><a href="http://127.0.0.1:8000/?etf=XLC">XLC:Communication Services </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XLC_156.png" onmouseover=mo(this)>
+        </div>
+        <div class="col-md-4 sector" id="xlp"><b><a href="http://127.0.0.1:8000/?etf=XLP">XLP:Consumer Staples</a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XLP_156.png" alt="" onmouseover=mo(this) >
+        </div>
+        <div class="col-md-4 sector" id="xly"><b><a href="http://127.0.0.1:8000/?etf=XLY">XLY:Consumer Discretionary</a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XLY_156.png" alt=""　>
+        </div>
+    </div>
+    <div class="row text-center text-lg-left">
+                <div class="col-md-4 sector" id="xle"><b><a href="http://127.0.0.1:8000/?etf=XLE">XLE:Energy</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XLE_156.png"  alt="" ></div>
+                <div class="col-md-4 sector" id="xlf"><b><a href="http://127.0.0.1:8000/?etf=XLF">XLF:Financial</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XLF_156.png" alt=""　></div>
+                <div class="col-md-4 sector" id="xlv"><b><a href="http://127.0.0.1:8000/?etf=XLV">XLV:Health Care</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLV_156.png" alt=""　></div>
+    </div>
+	<div class="row text-center text-lg-left">            
+				<div class="col-md-4 sector" id="xli"><b><a href="http://127.0.0.1:8000/?etf=XLI">XLI:Industrial</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLI_156.png" alt=""　></div>
+                <div class="col-md-4 sector" id="xlb"><b><a href="http://127.0.0.1:8000/?etf=XLB">XLB:Materials</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLB_156.png" alt=""　></div>
+                <div class="col-md-4 sector" id="xlre"><b><a href="http://127.0.0.1:8000/?etf=XLRE">XLRE:Real Estate</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLRE_156.png" alt=""　></div>
+    </div>
+	<div class="row text-center text-lg-left">	
+				<div class="col-md-4 sector" id="xlk"><b><a href="http://127.0.0.1:8000/?etf=XLK">XLK:Technology</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLK_156.png" alt=""　></div>
+                <div class="col-md-4 sector" id="xlu"><b><a href="http://127.0.0.1:8000/?etf=XLU">Utilities</a></b>
+                    <span class= "sizebar"  style="width:0%"> </span>
+					<img src="image/sectors/etf_XLU_156.png" alt=""　></div>
+                <div class="col-md-4 sector" id="xlsr"><b><a href="http://127.0.0.1:8000/?etf=XLSR">XLSR:Sector Rotation </a></b>
+                    <span class= "sizebar"  style="width:0%"></span>
+					<img src="image/sectors/etf_XLSR_156.png" alt=""　></div>
+     </div>
+
+
+    <div class="row text-center text-lg-center m-4">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+        <h1 class="text-center">SPDR Industry ETF</h1>
+        </div>
+        <div class="col-lg-4"></div>
+    </div>	
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="kbe"><b>KBE:Bank </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KBE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="kre"><b>KRE:Regional Banking </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KRE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="kce"><b>KCE:Capital Markets </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KCE_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="kie"><b>KIE:Insurance </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KIE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xar"><b>XAR:Aerospace &amp; Defense </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XAR_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xtn"><b>XTN:Transportation </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XTN_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="xbi"><b>XBI:Biotech </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XBI_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xph"><b>XPH:Pharmaceuticals </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XPH_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xhe"><b>XHE:Health Care Equipment </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XHE_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="xhs"><b>XHS:Health Care Services </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XHS_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xop"><b>XOP:Oil &amp; Gas Exploration &amp; Production </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XOP_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xes"><b>XES:Gas Equipment &amp; Services </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XES_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="xme"><b>XME:Metals &amp; Mining </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XME_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xrt"><b>XRT:Retail </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XRT_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xhb"><b>XHB:Homebuilders </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XHB_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="xsd"><b>XSD:Semiconductor </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XSD_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xsw"><b>XSW:Software &amp; Services </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XSW_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xntk"><b>XNTK:NYSE Technology </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XNTK_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="xitk"><b>XITK:FactSet Innovative Technology </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XITK_156.png">
+        </div>
+        <div class="col-md-4 sector" id="xtl"><b>XTL:Telecom </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_XTL_156.png">
+        </div>
+    </div>
+    <!-- End of Industry ETF-->
+
+    <div class="row text-center text-lg-center m-4">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+        <h1 class="text-center">SPDR Smart Beta ETF</h1>
+        </div>
+        <div class="col-lg-4"></div>
+    </div>
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="spyd"><b>SPYD:Portfolio S&amp;P 500 High Dividend </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_SPYD_156.png">
+        </div>
+        <div class="col-md-4 sector" id="sdy"><b>SDY:S&amp;P Dividend </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_SDY_156.png">
+        </div>
+        <div class="col-md-4 sector" id="wdiv"><b>WDIV:S&amp;P Global Dividend </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_WDIV_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="dwx"><b>DWX:S&amp;P International Dividend </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_DWX_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ediv"><b>EDIV:S&amp;P Emerging Markets Dividend </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_EDIV_156.png">
+        </div>
+        <div class="col-md-4 sector" id="qus"><b>QUS:MSCI USA StrategicFactors </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_QUS_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="qwld"><b>QWLD:MSCI World StrategicFactors </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_QWLD_156.png">
+        </div>
+        <div class="col-md-4 sector" id="qefa"><b>QEFA:MSCI EAFE StrategicFactors </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_QEFA_156.png">
+        </div>
+        <div class="col-md-4 sector" id="qemm"><b>QEMM:MSCI Emerging Markets StrategicFactors </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_QEMM_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="oney"><b>ONEY:Russell 1000 Yield Focus </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ONEY_156.png">
+        </div>
+        <div class="col-md-4 sector" id="onev"><b>ONEV:Russell 1000 Low Volatility Focus </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ONEV_156.png">
+        </div>
+        <div class="col-md-4 sector" id="oneo"><b>ONEO:Russell 1000 Momentum Focus </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ONEO_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="lglv"><b>LGLV:SSGA US Large Cap Low Volatility Index </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_LGLV_156.png">
+        </div>
+        <div class="col-md-4 sector" id="smlv"><b>SMLV:SSGA US Small Cap Low Volatility Index </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_SMLV_156.png">
+        </div>
+        <div class="col-md-4 sector" id="mmtm"><b>MMTM:S&amp;P 1500 Momentum Tilt </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_MMTM_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="vlu"><b>VLU:S&amp;P 1500 Value Tilt </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_VLU_156.png">
+        </div>
+        <div class="col-md-4 sector" id="dwfi"><b>DWFI:Dorsey Wright Fixed Income Allocation</b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_DWFI_156.png">
+        </div>
+    </div>
+
+
+
+
+</div>
+<div id="popup" height="777" style="border:2px dotted gray;background-color: rgba(255, 245,235, 0.85);max-width:560px;display: none;">
+    <span><img id="currentimg" src="" alt="" width="100%"></span>
+    <span id="mobile"></span>
+    <hr/>
+    <div class = "m-2">
+        <div class="container-fluid">
+            <div class="row" id="swlist">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Micromacro 2020</p>
+    </div>
+    <!-- /.container -->
+</footer>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/sw.js"></script>
+<script type="text/javascript">
+
+</script>
+
+
+</body>
+</html>

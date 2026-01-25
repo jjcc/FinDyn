@@ -28,6 +28,7 @@ class StockService:
             df = pd.read_csv(price_file, index_col='Date', parse_dates=True)
             last_date = df.index[-1]
             end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
+            start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
             
             # Adjust for weekends
             if end_date.weekday() == 5:
@@ -49,12 +50,17 @@ class StockService:
                     df = pd.concat([df, df_complement])
                     df.to_csv(price_file)
                     
-            return df.reset_index()
+            df_out = df.reset_index()
+            # Filter to requested window for plotting (end is exclusive per yfinance semantics)
+            df_out['Date'] = pd.to_datetime(df_out['Date'])
+            df_out = df_out[(df_out['Date'] >= start_date) & (df_out['Date'] < end_date)]
+            return df_out
             
         except (IndexError, FileNotFoundError):
             df = yf.download(stock, start=start, end=end, multi_level_index=False)
             df.to_csv(price_file)
-            return df.reset_index()
+            df_out = df.reset_index()
+            return df_out
 
     def calculate_emas(self, df: pd.DataFrame) -> pd.DataFrame:
         """Calculate EMA indicators for stock data"""

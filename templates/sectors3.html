@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Stock Image</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/thumbnail-gallery.css" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114998708-1"></script>
+    <script>
+  window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+        gtag('config', 'UA-114998708-1');
+    </script>
+   <style>
+	td>img {
+		
+		width:360px;
+	}
+
+    td>img:hover{
+        overflow:visible
+    }
+	
+    .cs{
+        overflow:hidden;
+        width:300px;/*change this to whatever you want*/
+        height:150px;/*change this to whatever you want*/
+
+        /*Of course, to get the desired effect, the size of the image "<img>" below must be larger than the size mentioned above*/
+    }
+
+    .cs{
+        overflow:visible
+    }
+	
+	.container img {
+		width: 100%;
+	}
+    .sizebar {
+        background-color:greenyellow;
+        display:inline-block;
+        height:10px;
+    }
+	</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sectors</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors">Sec/Ind/Sb
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors2">SPDY 2
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Sector 3
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">数据服务</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">联络我们</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- Page Content -->
+<div class="container">
+<div class="row text-center text-lg-center m-4">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+    <h1 class="text-center">iShare (Part 2) </h1>
+    </div>
+    <div class="col-lg-3"></div>
+</div>
+
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="pick"><b><a href="http://127.0.0.1:8000/?etf=PICK">PICK:MSCI Global Metals &amp; Mining Producers </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_PICK_156.png">
+    </div>
+    <div class="col-md-4 sector" id="ieo"><b><a href="http://127.0.0.1:8000/?etf=IEO">IEO:U.S. Oil &amp; Gas Exploration &amp; Production </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IEO_156.png">
+    </div>
+    <div class="col-md-4 sector" id="rxi"><b><a href="http://127.0.0.1:8000/?etf=RXI">RXI:Global Consumer Discretionary </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_RXI_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="ixg"><b><a href="http://127.0.0.1:8000/?etf=IXG">IXG:Global Financials </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IXG_156.png">
+    </div>
+    <div class="col-md-4 sector" id="slvp"><b><a href="http://127.0.0.1:8000/?etf=SLVP">SLVP:MSCI Global Silver and Metals Miners </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_SLVP_156.png">
+    </div>
+    <div class="col-md-4 sector" id="wood"><b><a href="http://127.0.0.1:8000/?etf=WOOD">WOOD:Global Timber &amp; Forestry </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_WOOD_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="iat"><b><a href="http://127.0.0.1:8000/?etf=IAT">IAT:U.S. Regional Banks </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IAT_156.png">
+    </div>
+    <div class="col-md-4 sector" id="exi"><b><a href="http://127.0.0.1:8000/?etf=EXI">EXI:Global Industrials </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_EXI_156.png">
+    </div>
+    <div class="col-md-4 sector" id="idna"><b><a href="http://127.0.0.1:8000/?etf=IDNA">IDNA:Genomics Immunology and Healthcare </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IDNA_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="jxi"><b><a href="http://127.0.0.1:8000/?etf=JXI">JXI:Global Utilities </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_JXI_156.png">
+    </div>
+    <div class="col-md-4 sector" id="iez"><b><a href="http://127.0.0.1:8000/?etf=IEZ">IEZ:U.S. Oil Equipment &amp; Services </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IEZ_156.png">
+    </div>
+    <div class="col-md-4 sector" id="ihak"><b><a href="http://127.0.0.1:8000/?etf=IHAK">IHAK:Cybersecurity and Tech </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IHAK_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="iai"><b><a href="http://127.0.0.1:8000/?etf=IAI">IAI:U.S. Broker-Dealers &amp; Securities Exchanges </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IAI_156.png">
+    </div>
+    <div class="col-md-4 sector" id="ietc"><b><a href="http://127.0.0.1:8000/?etf=IETC">IETC:Evolved U.S. Technology </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IETC_156.png">
+    </div>
+    <div class="col-md-4 sector" id="iak"><b><a href="http://127.0.0.1:8000/?etf=IAK">IAK:U.S. Insurance </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IAK_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="fill"><b><a href="http://127.0.0.1:8000/?etf=FILL">FILL:MSCI Global Energy Producers </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_FILL_156.png">
+    </div>
+    <div class="col-md-4 sector" id="vegi"><b><a href="http://127.0.0.1:8000/?etf=VEGI">VEGI:MSCI Global Agriculture Producers </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_VEGI_156.png">
+    </div>
+    <div class="col-md-4 sector" id="ifra"><b><a href="http://127.0.0.1:8000/?etf=IFRA">IFRA:U.S. Infrastructure </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IFRA_156.png">
+    </div>
+</div>
+
+<div class="row text-center text-lg-left">
+    <div class="col-md-4 sector" id="iedi"><b><a href="http://127.0.0.1:8000/?etf=IEDI">IEDI:Evolved U.S. Discretionary Spending </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_IEDI_156.png">
+    </div>
+    <div class="col-md-4 sector" id="emif"><b><a href="http://127.0.0.1:8000/?etf=EMIF">EMIF:Emerging Markets Infrastructure </a></b>
+        <span class= "sizebar"  style="width:0%"> </span>
+                <img src="image/sectors/etf_EMIF_156.png">
+    </div>
+</div>
+
+
+
+
+</div>
+<div id="popup" height="777" style="border:2px dotted gray;background-color: rgba(255, 245,235, 0.85);max-width:560px;display: none;">
+  <span><img id="currentimg" src="" alt="" width="100%"></span>
+   <hr/>
+    <div class = "m-2">
+	<div class="container-fluid">
+		<div class="row" id="swlist">
+		</div>
+	</div>
+  </div>
+</div>
+<!-- /.container -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Micromacro 2020</p>
+    </div>
+    <!-- /.container -->
+</footer>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/sw.js"></script>
+<script type="text/javascript">
+
+</script>
+
+
+</body>
+</html>

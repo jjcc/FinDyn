@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Stock Image</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/thumbnail-gallery.css" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114998708-1"></script>
+    <script>
+  window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+        gtag('config', 'UA-114998708-1');
+    </script>
+   <style>
+	td>img {
+		
+		width:360px;
+	}
+
+    td>img:hover{
+        overflow:visible
+    }
+	
+    .cs{
+        overflow:hidden;
+        width:300px;/*change this to whatever you want*/
+        height:150px;/*change this to whatever you want*/
+
+        /*Of course, to get the desired effect, the size of the image "<img>" below must be larger than the size mentioned above*/
+    }
+
+    .cs{
+        overflow:visible
+    }
+	
+	.container img {
+		width: 100%;
+	}
+    .sizebar {
+        background-color:greenyellow;
+        display:inline-block;
+        height:10px;
+    }
+	</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sectors</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors">Sec/Ind/Sb
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">SPDY 2
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sectors3">Sector 3
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">数据服务</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">联络我们</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row text-center text-lg-center m-4">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+        <h1 class="text-center">SPDR ETF:New Economy:21 Century Sectors</h1>
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+   <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="komp"><b>KOMP:New Economies Composite </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KOMP_156.png">
+        </div>
+        <div class="col-md-4 sector" id="sims"><b>SIMS:Intelligent Structures </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_SIMS_156.png">
+        </div>
+        <div class="col-md-4 sector" id="hail"><b>HAIL:Smart Mobility </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_HAIL_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="fite"><b>FITE:Future Security </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_FITE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="rokt"><b>ROKT:Final Frontiers </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ROKT_156.png">
+        </div>
+        <div class="col-md-4 sector" id="cnrg"><b>CNRG:Clean Power </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_CNRG_156.png">
+        </div>
+    </div>
+
+    <!-- iShare Sector 1-->
+    <div class="row text-center text-lg-center m-4">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+        <h1 class="text-center">iShare ETF: Sector (L)</h1>
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="ibb"><b><a href="http://127.0.0.1:8000/?etf=IBB"> IBB:Nasdaq Biotechnology </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IBB_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ihi"><b><a href="http://127.0.0.1:8000/?etf=IHI">IHI:U.S. Medical Devices</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IHI_156.png">
+        </div>
+        <div class="col-md-4 sector" id="iyw"><a href="http://127.0.0.1:8000/?etf=IYW"><b>IYW:U.S. Technology </a> </b></a>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYW_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="igv"><b><a href="http://127.0.0.1:8000/?etf=IGV">IGV:Expanded Tech-Software Sector </a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IGV_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ixn"><b><a href="http://127.0.0.1:8000/?etf=IXN">IXN:Global Tech</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IXN_156.png">
+        </div>
+        <div class="col-md-4 sector" id="soxx"><b><a href="http://127.0.0.1:8000/?etf=SOXX">SOXX:PHLX Semiconductor </a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_SOXX_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="igf"><b><a href="http://127.0.0.1:8000/?etf=IGF">IGF:Global Infrastructure </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IGF_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ita"><b><a href="http://127.0.0.1:8000/?etf=ITA">ITA:U.S. Aerospace &amp; Defense </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ITA_156.png">
+        </div>
+        <div class="col-md-4 sector" id="igm"><b><a href="http://127.0.0.1:8000/?etf=IGM">IGM:Expanded Tech Sector </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IGM_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyh"><b><a href="http://127.0.0.1:8000/?etf=IYH">IYH:U.S. Healthcare </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYH_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ixj"><b><a href="http://127.0.0.1:8000/?etf=IXJ">IXJ:Global Healthcare </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IXJ_156.png">
+        </div>
+        <div class="col-md-4 sector" id="itb"><b><a href="http://127.0.0.1:8000/?etf=ITB">ITB:U.S. Home Construction </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_ITB_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyg"><b><a href="http://127.0.0.1:8000/?etf=IYG">IYG:U.S. Financial Services</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYG_156.png">
+        </div>
+        <div class="col-md-4 sector" id="iyf"><b><a href="http://127.0.0.1:8000/?etf=IYF">IYF:U.S. Financials </a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYF_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ixc"><b><a href="http://127.0.0.1:8000/?etf=IXC">IXC:Global Energy </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IXC_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyc"><b><a href="http://127.0.0.1:8000/?etf=IYC">IYC:U.S. Consumer Services </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYC_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ihf"><b><a href="http://127.0.0.1:8000/?etf=IHF">IHF:U.S. Healthcare Providers </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IHF_156.png">
+        </div>
+        <div class="col-md-4 sector" id="iyj"><b><a href="http://127.0.0.1:8000/?etf=IYJ">IYJ:U.S. Industrials </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYJ_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyt"><b><a href="http://127.0.0.1:8000/?etf=IYT">IYT:Transportation Average </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYT_156.png">
+        </div>
+        <div class="col-md-4 sector" id="idu"><b><a href="http://127.0.0.1:8000/?etf=IDU">IDU:U.S. Utilities </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IDU_156.png">
+        </div>
+        <div class="col-md-4 sector" id="eufn"><b><a href="http://127.0.0.1:8000/?etf=EUFN">EUFN:MSCI Europe Financials </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_EUFN_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyk"><b><a href="http://127.0.0.1:8000/?etf=IYK">IYK:U.S. Consumer Goods</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYK_156.png">
+        </div>
+        <div class="col-md-4 sector" id="kxi"><b><a href="http://127.0.0.1:8000/?etf=KXI">KXI:Global Consumer Staples</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_KXI_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ring"><b><a href="http://127.0.0.1:8000/?etf=RING">RING:MSCI Global Gold Miners</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_RING_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iye"><b><a href="http://127.0.0.1:8000/?etf=IYE">IYE:U.S. Energy </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ige"><b><a href="http://127.0.0.1:8000/?etf=IGE">IGE:North American Natural Resources </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IGE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="mxi"><b><a href="http://127.0.0.1:8000/?etf=MXI">MXI:Global Materials</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_MXI_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="iyz"><b><a href="http://127.0.0.1:8000/?etf=IYZ">IYZ:U.S. Telecommunications </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYZ_156.png">
+        </div>
+        <div class="col-md-4 sector" id="ihe"><b><a href="http://127.0.0.1:8000/?etf=IHE">IHE:U.S. Pharmaceuticals</a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IHE_156.png">
+        </div>
+        <div class="col-md-4 sector" id="iym"><b><a href="http://127.0.0.1:8000/?etf=IYM">IYM:U.S. Basic Materials </a></b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IYM_156.png">
+        </div>
+    </div>
+
+    <div class="row text-center text-lg-left">
+        <div class="col-md-4 sector" id="ixp"><b><a href="http://127.0.0.1:8000/?etf=IXP">IXP:Global Comm Services </a> </b>
+            <span class= "sizebar"  style="width:0%"> </span>
+                    <img src="image/sectors/etf_IXP_156.png">
+        </div>
+    </div>
+
+
+    <!-- iShare Sector 2 -->
+
+
+</div>
+<div id="popup" height="777" style="border:2px dotted gray;background-color: rgba(255, 245,235, 0.85);max-width:560px;display: none;">
+  <span><img id="currentimg" src="" alt="" width="100%"></span>
+   <hr/>
+    <div class = "m-2">
+	<div class="container-fluid">
+		<div class="row" id="swlist">
+		</div>
+	</div>
+  </div>
+</div>
+<!-- /.container -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Micromacro 2020</p>
+    </div>
+    <!-- /.container -->
+</footer>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/sw.js"></script>
+<script type="text/javascript">
+
+</script>
+
+
+</body>
+</html>
