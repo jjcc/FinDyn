@@ -101,12 +101,11 @@ def init_app(app, socketio):
         except Exception as e:
             stocks = []
             
-        # Get df_data from session instead of global storage
-        df_data_dict = session.get('df_data', None)
-        # Convert dict back to DataFrame if it exists
-        df_data = pd.DataFrame(df_data_dict) if df_data_dict is not None else None
+        # Get symbols from session instead of the entire DataFrame
+        symbols = session.get('symbols', [])
+        etf = session.get('etf', '')
         stock_data = fetch_stock_data(stocks, socketio, symbol_map)
-        plots = generate_plots(stock_data, df_data)
+        plots = generate_plots(stock_data, etf)
         emit('data_ready', {'plots': plots})
 
     def get_stocks(etf):
@@ -146,9 +145,9 @@ def init_app(app, socketio):
                 else:
                     symbols = df_etf['Symbol'].tolist()
                     
-                # Store df_data in session instead of global storage
-                # Convert DataFrame to dict for JSON serialization
-                session['df_data'] = df_etf.to_dict()
+                # Store only the symbol list in session instead of the entire DataFrame
+                # This avoids storing large data in session which can exceed cookie size limits
+                session['symbols'] = df_etf['Symbol'].tolist() if 'Symbol' in df_etf.columns else []
                 session['etf'] = etf
                 return symbols
             except Exception as e:

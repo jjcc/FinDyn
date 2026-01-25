@@ -35,14 +35,59 @@ def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict, test = False
     
     return stock_data
 
-def generate_plots(stock_data: Dict[str, pd.DataFrame], df_data: pd.DataFrame) -> Dict[str, str]:
+def generate_plots(stock_data: Dict[str, pd.DataFrame], etf: str = None) -> Dict[str, str]:
     """Generate Plotly charts for all stocks"""
+    from ..constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF, INDUSTRY_ETFS
+    from ..config import Config
+    
     stock_service = StockService({})
     plots = {}
     
+    # Load ETF data if needed
+    df_data = None
+    if etf:
+        try:
+            # Determine which folder to use based on ETF type
+            if etf in SECTOR_ETFS:
+                group = 'spdr'
+                etf_lower = etf.lower()
+                if etf == 'XLSR':
+                    file_name = None
+                else:
+                    file_name = f'{Config.SPDR_FOLDER}/index-holdings-{etf_lower}.csv'
+            elif etf in ISHARE_SECTOR1_ETF:
+                group = 'ishare_sector1'
+                file_name = f'{Config.ISHARE_SECTOR1_FOLDER}/{etf}.csv'
+            elif etf in ISHARE_SECTOR2_ETF:
+                group = 'ishare_sector2'
+                file_name = f'{Config.ISHARE_SECTOR2_FOLDER}/{etf}.csv'
+            elif etf in INDUSTRY_ETFS:
+                group = 'spdr_industry'
+                file_name = f'{Config.SPDR_INDUSTRY_FOLDER}/{etf}.csv'
+            else:
+                file_name = None
+                group = None
+            
+            # Load the ETF data if we have a file name
+            if file_name and group:
+                df_data = pd.read_csv(file_name)
+        except Exception as e:
+            print(f"Error reading ETF file {file_name}: {e}")
+            df_data = None
+    
+    # Generate plots for each stock
     for stock, data in stock_data.items():
-        info = df_data[df_data['Symbol'] == stock] if df_data is not None else pd.DataFrame()
-        plot_json = stock_service.generate_plot(stock, data, info)
+        # Get stock info from the ETF data if available
+        if df_data is not None and 'Symbol' in df_data.columns:
+            stock_info = df_data[df_data['Symbol'] == stock]
+            if not stock_info.empty:
+                info_df = pd.DataFrame(stock_info)
+            else:
+                info_df = pd.DataFrame()
+        else:
+            info_df = pd.DataFrame()
+        
+        plot_json = stock_service.generate_plot(stock, data, info_df)
         plots[stock] = plot_json
         
     return plots
