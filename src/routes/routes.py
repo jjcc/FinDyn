@@ -140,7 +140,9 @@ def init_app(app, socketio):
                 df_etf = pd.read_csv(file_name)
                 if group in ['ishare_sector1', 'ishare_sector2']:
                     df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
-                    df_vip = df_vip[df_vip['Exchange'].str.contains('NASD|New York')]
+                    df_vip = df_vip[
+                        df_vip['Exchange'].str.contains('NASD|New York', na=False)
+                    ]
                     symbols = df_vip['Symbol'].tolist()
                 else:
                     symbols = df_etf['Symbol'].tolist()
