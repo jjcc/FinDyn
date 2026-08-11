@@ -11,6 +11,22 @@
     <!-- Include Socket.IO -->
     <!--<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <style>
+      .ema-legend {
+        display: flex;
+        gap: 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .ema-6 { color: #ef4444; }
+      .ema-12 { color: #f59e0b; }
+      .ema-30 { color: #7c3aed; }
+      .stocknear-link {
+        font-size: 0.7rem;
+        font-weight: 400;
+        vertical-align: middle;
+      }
+    </style>
   </head>
   <body>
     <div class="container-fluid">
@@ -84,6 +100,10 @@
         return String(value).split('T')[0].split(' ')[0];
       }
 
+      function getStocknearUrl(symbol) {
+        return `https://stocknear.com/stocks/${encodeURIComponent(symbol)}`;
+      }
+
       function renderStockChart(container, plotData, options = {}) {
         const { showTimeScale = false, height = 260 } = options;
         const candlesticks = plotData.data.find((trace) => trace.type === 'candlestick');
@@ -134,7 +154,7 @@
           close: Number(candlesticks.close[index])
         })));
 
-        const emaColors = ['#2563eb', '#f59e0b', '#7c3aed'];
+        const emaColors = ['#ef4444', '#f59e0b', '#7c3aed'];
         plotData.data
           .filter((trace) => trace.type === 'scatter' && trace.name.startsWith('EMA_'))
           .forEach((trace, traceIndex) => {
@@ -142,8 +162,7 @@
               color: emaColors[traceIndex % emaColors.length],
               lineWidth: 1,
               priceLineVisible: false,
-              lastValueVisible: false,
-              title: trace.name.replace('_', ' ')
+              lastValueVisible: false
             });
             lineSeries.setData(trace.x.map((time, index) => ({
               time: normalizeChartTime(time),
@@ -203,10 +222,18 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <a href="#" data-toggle="modal" data-target="#modal-${stock}">${stock}</a>
+                  <a class="stocknear-link ml-2" href="${getStocknearUrl(stock)}"
+                     target="_blank" rel="noopener noreferrer"
+                     title="View ${stock} on Stocknear">stocknear ↗</a>
                   <label class="float-right small font-weight-normal">
                     <input type="checkbox" class="stock-checkbox" data-stock="${stock}"> select
                   </label>
                 </h5>
+                <div class="ema-legend mb-2" aria-label="EMA indicators">
+                  <span class="ema-6">EMA 6</span>
+                  <span class="ema-12">EMA 12</span>
+                  <span class="ema-30">EMA 30</span>
+                </div>
                 <div id="chart-${stock}" style="height: 260px;"></div>
               </div>
             </div>
@@ -231,6 +258,11 @@
                   </button>
                 </div>
                 <div class="modal-body">
+                  <div class="ema-legend mb-2" aria-label="EMA indicators">
+                    <span class="ema-6">EMA 6</span>
+                    <span class="ema-12">EMA 12</span>
+                    <span class="ema-30">EMA 30</span>
+                  </div>
                   <div id="modal-chart-${stock}" style="height: 560px;"></div>
                 </div>
               </div>
