@@ -34,6 +34,7 @@ from src.constant import (  # noqa: E402
     ISHARE_SECTOR1_ETF,
     ISHARE_SECTOR2_ETF,
     SECTOR_ETFS,
+    US_EXCHANGES,
 )
 
 
@@ -129,8 +130,18 @@ def _raw_value(value):
     return value.get("raw") if isinstance(value, dict) else value
 
 
+def filter_us_listings(frame: pd.DataFrame) -> pd.DataFrame:
+    """Keep securities whose primary listing is on a supported US exchange."""
+    if "Exchange" not in frame.columns:
+        raise ValueError("holdings data has no Exchange column for US filtering")
+    exchanges = frame["Exchange"].astype("string").str.strip().str.casefold()
+    return frame[exchanges.isin(US_EXCHANGES)].copy()
+
+
 def parse_ishares_records(records: list) -> pd.DataFrame:
     frame = pd.DataFrame(records)
+    if frame.empty:
+        raise ValueError("iShares holdings response is empty")
     if len(frame.columns) == 18:
         frame = frame.drop(columns=[2])
         frame.columns = range(17)
@@ -144,11 +155,12 @@ def parse_ishares_records(records: list) -> pd.DataFrame:
         frame[column] = frame[column].map(_raw_value)
     for column in ("MarketCapJson", "WeightJson", "NotionCapJson", "Share"):
         frame[column] = pd.to_numeric(frame[column], errors="coerce")
-    frame = frame[
-        frame["Type"].astype("string").str.casefold().eq("equity")
-    ]
+    frame = frame[frame["Type"].astype("string").str.casefold().eq("equity")]
+    frame = filter_us_listings(frame)
     return normalize_holdings(
-        frame, required={"Symbol", "WeightJson", "Exchange"}
+        frame,
+        required={"Symbol", "WeightJson", "Exchange"},
+        allow_empty=True,
     )
 
 
@@ -162,6 +174,8 @@ def parse_ishares_csv(content: bytes) -> pd.DataFrame:
         raise ValueError("iShares CSV has no Ticker header")
 
     frame = pd.read_csv(io.StringIO("\n".join(lines[header_row:])))
+    if frame.empty:
+        raise ValueError("iShares holdings CSV is empty")
     frame = frame.rename(
         columns={
             "Ticker": "Symbol",
@@ -193,11 +207,12 @@ def parse_ishares_csv(content: bytes) -> pd.DataFrame:
             frame[column].astype("string").str.replace(",", "", regex=False),
             errors="coerce",
         )
-    frame = frame[
-        frame["Type"].astype("string").str.casefold().eq("equity")
-    ]
+    frame = frame[frame["Type"].astype("string").str.casefold().eq("equity")]
+    frame = filter_us_listings(frame)
     return normalize_holdings(
-        frame[ISHARES_COLUMNS], required={"Symbol", "WeightJson", "Exchange"}
+        frame[ISHARES_COLUMNS],
+        required={"Symbol", "WeightJson", "Exchange"},
+        allow_empty=True,
     )
 
 
@@ -239,7 +254,11 @@ def download_ishares(
     return parse_ishares_records(records)
 
 
-def normalize_holdings(frame: pd.DataFrame, required: set[str]) -> pd.DataFrame:
+def normalize_holdings(
+    frame: pd.DataFrame,
+    required: set[str],
+    allow_empty: bool = False,
+) -> pd.DataFrame:
     missing = required - set(frame.columns)
     if missing:
         raise ValueError(f"holdings data is missing columns: {sorted(missing)}")
@@ -251,7 +270,7 @@ def normalize_holdings(frame: pd.DataFrame, required: set[str]) -> pd.DataFrame:
         & frame["Symbol"].ne("-")
     ]
     frame = frame.drop_duplicates(subset=["Symbol"], keep="first")
-    if frame.empty:
+    if frame.empty and not allow_empty:
         raise ValueError("holdings response contains no symbols")
     return frame.reset_index(drop=True)
 

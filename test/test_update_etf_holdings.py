@@ -57,6 +57,33 @@ def test_parse_current_ishares_csv_excludes_non_equity_rows():
     assert frame['Symbol'].tolist() == ['AAPL']
 
 
+def test_parse_current_ishares_csv_excludes_non_us_exchange_rows():
+    content = b'''Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Quantity,Price,Location,Exchange,Currency,Accrual Date\n"AAPL","APPLE INC","Technology","Equity","900","90","900","5","180","United States","NASDAQ","USD","-"\n"2330","TAIWAN SEMICONDUCTOR","Technology","Equity","100","10","100","2","50","Taiwan","Taiwan Stock Exchange","USD","-"\n'''
+
+    frame = updater.parse_ishares_csv(content)
+
+    assert frame['Symbol'].tolist() == ['AAPL']
+
+
+def test_us_exchange_filter_keeps_supported_us_venues():
+    frame = pd.DataFrame(
+        {
+            'Symbol': ['NASD', 'NYSE', 'AMEX', 'BZX', 'FOREIGN'],
+            'Exchange': [
+                'NASDAQ',
+                'New York Stock Exchange Inc.',
+                'Nyse Mkt Llc',
+                'Cboe BZX',
+                'Tokyo Stock Exchange',
+            ],
+        }
+    )
+
+    filtered = updater.filter_us_listings(frame)
+
+    assert filtered['Symbol'].tolist() == ['NASD', 'NYSE', 'AMEX', 'BZX']
+
+
 def test_parse_current_ishares_csv_handles_type_and_asset_class_columns():
     content = b'''Ticker,Name,Sector,Type,Asset Class,Market Value,Weight (%),Notional Value,Quantity,Price,Location,Exchange,Currency,Accrual Date\n"AAPL","APPLE INC","Technology","Common Stock","Equity","1,000","100","1,000","5","200","United States","NASDAQ","USD","-"\n'''
 
@@ -72,6 +99,15 @@ def test_normalize_holdings_excludes_placeholder_symbol():
     normalized = updater.normalize_holdings(frame, required={'Symbol', 'Name'})
 
     assert normalized['Symbol'].tolist() == ['AAPL']
+
+
+def test_ishares_csv_allows_valid_fund_with_no_us_listings():
+    content = b'''Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Quantity,Price,Location,Exchange,Currency,Accrual Date\n"2330","TAIWAN SEMICONDUCTOR","Technology","Equity","100","100","100","2","50","Taiwan","Taiwan Stock Exchange","USD","-"\n'''
+
+    frame = updater.parse_ishares_csv(content)
+
+    assert frame.empty
+    assert list(frame.columns) == updater.ISHARES_COLUMNS
 
 
 def test_symbol_map_preserves_existing_primary_membership(tmp_path):

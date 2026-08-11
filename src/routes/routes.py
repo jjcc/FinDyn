@@ -2,7 +2,13 @@ import datetime
 from flask import render_template, request, send_file, session
 from flask_socketio import emit
 from flask_paginate import Pagination, get_page_parameter
-from ..constant import SECTOR_ETFS, ISHARE_SECTOR1_ETF, ISHARE_SECTOR2_ETF, INDUSTRY_ETFS
+from ..constant import (
+    INDUSTRY_ETFS,
+    ISHARE_SECTOR1_ETF,
+    ISHARE_SECTOR2_ETF,
+    SECTOR_ETFS,
+    US_EXCHANGES,
+)
 from ..utils.data_utils import fetch_stock_data, generate_plots
 import pandas as pd
 import json
@@ -140,9 +146,13 @@ def init_app(app, socketio):
                 df_etf = pd.read_csv(file_name)
                 if group in ['ishare_sector1', 'ishare_sector2']:
                     df_vip = df_etf[df_etf['WeightJson'] >= 0.2]
-                    df_vip = df_vip[
-                        df_vip['Exchange'].str.contains('NASD|New York', na=False)
-                    ]
+                    exchanges = (
+                        df_vip['Exchange']
+                        .astype('string')
+                        .str.strip()
+                        .str.casefold()
+                    )
+                    df_vip = df_vip[exchanges.isin(US_EXCHANGES)]
                     symbols = df_vip['Symbol'].tolist()
                 else:
                     symbols = df_etf['Symbol'].tolist()

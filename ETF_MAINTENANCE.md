@@ -4,6 +4,10 @@ FinDyn reads ETF membership from `data/meta/`. Run the updater periodically to
 refresh those files from the official State Street and iShares holdings pages
 and rebuild `data/meta/symbol_map.json`.
 
+Only securities listed on supported U.S. exchanges are retained. For iShares
+global ETFs, foreign-exchange listings such as Tokyo, Hong Kong, and Korea are
+excluded even when the provider reports their market value in U.S. dollars.
+
 ## Preview an update
 
 Start with a dry run. It downloads and validates current holdings and reports

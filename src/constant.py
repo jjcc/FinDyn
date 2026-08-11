@@ -5,3 +5,14 @@ ISHARE_SECTOR2_ETF = {"PICK","IEO","RXI","IXG","SLVP","WOOD","IAT","EXI","IDNA",
                       "FILL","VEGI","IFRA","IEDI","EMIF"}
 INDUSTRY_ETFS = {"KBE","KRE","KCE","KIE","XAR","XTN","XBI","XPH","XHE","XHS",
                  "XOP","XES","XME","XRT","XHB","XSD","XSW","XNTK","XITK","XTL"} # not isare
+
+# Exact provider exchange labels accepted as US listings. Keep this centralized
+# so the holdings updater and web routes apply the same rule.
+US_EXCHANGES = {
+    "cboe bzx",
+    "nasdaq",
+    "new york",
+    "new york stock exchange inc.",
+    "nyse",
+    "nyse mkt llc",
+}
