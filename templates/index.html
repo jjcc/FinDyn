@@ -6,8 +6,8 @@
     <title>Stock Charts</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <!-- Include Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- TradingView Lightweight Charts (same renderer used by stock_chart) -->
+    <script src="https://unpkg.com/lightweight-charts@5.0.8/dist/lightweight-charts.standalone.production.js"></script>
     <!-- Include Socket.IO -->
     <!--<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
@@ -78,6 +78,98 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+      const chartInstances = new Map();
+
+      function normalizeChartTime(value) {
+        return String(value).split('T')[0].split(' ')[0];
+      }
+
+      function renderStockChart(container, plotData, options = {}) {
+        const { showTimeScale = false, height = 260 } = options;
+        const candlesticks = plotData.data.find((trace) => trace.type === 'candlestick');
+        if (!candlesticks || !candlesticks.x || candlesticks.x.length === 0) {
+          container.textContent = 'No data';
+          return null;
+        }
+
+        const existingChart = chartInstances.get(container.id);
+        if (existingChart) {
+          existingChart.remove();
+        }
+
+        const chart = LightweightCharts.createChart(container, {
+          width: container.clientWidth,
+          height: height,
+          layout: {
+            attributionLogo: false,
+            background: { type: LightweightCharts.ColorType.Solid, color: 'transparent' },
+            textColor: '#334155'
+          },
+          grid: {
+            vertLines: { color: '#f1f5f9' },
+            horzLines: { color: '#f1f5f9' }
+          },
+          crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+          handleScale: { mouseWheel: false, pinch: false },
+          rightPriceScale: { borderVisible: false },
+          timeScale: {
+            borderVisible: showTimeScale,
+            timeVisible: true,
+            visible: showTimeScale
+          }
+        });
+
+        const candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
+          upColor: '#16a34a',
+          downColor: '#dc2626',
+          borderVisible: false,
+          wickUpColor: '#16a34a',
+          wickDownColor: '#dc2626'
+        });
+        candleSeries.setData(candlesticks.x.map((time, index) => ({
+          time: normalizeChartTime(time),
+          open: Number(candlesticks.open[index]),
+          high: Number(candlesticks.high[index]),
+          low: Number(candlesticks.low[index]),
+          close: Number(candlesticks.close[index])
+        })));
+
+        const emaColors = ['#2563eb', '#f59e0b', '#7c3aed'];
+        plotData.data
+          .filter((trace) => trace.type === 'scatter' && trace.name.startsWith('EMA_'))
+          .forEach((trace, traceIndex) => {
+            const lineSeries = chart.addSeries(LightweightCharts.LineSeries, {
+              color: emaColors[traceIndex % emaColors.length],
+              lineWidth: 1,
+              priceLineVisible: false,
+              lastValueVisible: false,
+              title: trace.name.replace('_', ' ')
+            });
+            lineSeries.setData(trace.x.map((time, index) => ({
+              time: normalizeChartTime(time),
+              value: Number(trace.y[index])
+            })).filter((point) => Number.isFinite(point.value)));
+          });
+
+        chart.timeScale().fitContent();
+
+        const resizeObserver = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (entry && entry.contentRect.width) {
+            chart.applyOptions({ width: entry.contentRect.width });
+          }
+        });
+        resizeObserver.observe(container);
+
+        const originalRemove = chart.remove.bind(chart);
+        chart.remove = function() {
+          resizeObserver.disconnect();
+          originalRemove();
+        };
+        chartInstances.set(container.id, chart);
+        return chart;
+      }
+
         document.addEventListener('DOMContentLoaded', function() {
           const domain = window.location.hostname;
           if (domain === '127.0.0.1') {
@@ -111,10 +203,11 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <a href="#" data-toggle="modal" data-target="#modal-${stock}">${stock}</a>
-                  <input type="checkbox" class="stock-checkbox" data-stock="${stock}"> select</div>
-    
+                  <label class="float-right small font-weight-normal">
+                    <input type="checkbox" class="stock-checkbox" data-stock="${stock}"> select
+                  </label>
                 </h5>
-                <div id="plotly-div-${stock}"></div>
+                <div id="chart-${stock}" style="height: 260px;"></div>
               </div>
             </div>
           `;
@@ -138,19 +231,24 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <div id="plotly-modal-div-${stock}"></div>
+                  <div id="modal-chart-${stock}" style="height: 560px;"></div>
                 </div>
               </div>
             </div>
           `;
           modalsContainer.appendChild(modalDiv);
 
-          // Render charts
+          // Render the card immediately. Render the modal only after it becomes
+          // visible so Lightweight Charts can measure its actual width.
           const plotData = JSON.parse(plot);
-          Plotly.newPlot(`plotly-div-${stock}`, plotData.data, plotData.layout);
-          const plotModalData = JSON.parse(JSON.stringify(plotData)); // Deep copy the plot data
-        plotModalData.layout.height = 600; // Increase the height for modal
-          Plotly.newPlot(`plotly-modal-div-${stock}`, plotModalData.data, plotModalData.layout);
+          renderStockChart(document.getElementById(`chart-${stock}`), plotData);
+          $(modalDiv).on('shown.bs.modal', function() {
+            renderStockChart(
+              document.getElementById(`modal-chart-${stock}`),
+              plotData,
+              { showTimeScale: true, height: 560 }
+            );
+          });
         }
       });
 

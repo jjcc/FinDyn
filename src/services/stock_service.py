@@ -30,15 +30,17 @@ class StockService:
             end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
             start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
             
-            # Adjust for weekends
-            if end_date.weekday() == 5:
-                end_date -= datetime.timedelta(days=1)
-            elif end_date.weekday() == 6:
-                end_date -= datetime.timedelta(days=2)
-            print(f'adjusted end_date {end_date} and last_date {last_date} for {stock}')
-                
-            if end_date > last_date:
-                next_of_last = last_date + datetime.timedelta(days=1)
+            next_of_last = last_date + datetime.timedelta(days=1)
+            missing_business_dates = pd.bdate_range(
+                start=next_of_last,
+                end=end_date,
+                inclusive='left',
+            )
+
+            # yfinance treats end as exclusive. Avoid empty requests such as
+            # [2026-08-12, 2026-08-12), and do not query on weekends when the
+            # cache already contains the latest trading day.
+            if next_of_last < end_date and not missing_business_dates.empty:
                 df_complement = yf.download(stock, start=next_of_last, end=end, multi_level_index=False)
                 
                 # Remove overlapping data
