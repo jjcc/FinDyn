@@ -26,12 +26,36 @@ class StockService:
         
         try:
             df = pd.read_csv(price_file, index_col='Date', parse_dates=True)
+            df.index = pd.to_datetime(df.index)
+            df = df.sort_index()
+            first_date = df.index[0]
             last_date = df.index[-1]
             end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
             start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
-            
+
+            downloaded_frames = []
+
+            # Backfill history when the requested window starts before the
+            # earliest cached row. Limit the download to the requested end in
+            # case the entire requested window predates the cache.
+            leading_end = min(first_date, end_date)
+            leading_business_dates = pd.bdate_range(
+                start=start_date,
+                end=leading_end,
+                inclusive='left',
+            )
+            if start_date < leading_end and not leading_business_dates.empty:
+                leading_data = yf.download(
+                    stock,
+                    start=start,
+                    end=leading_end,
+                    multi_level_index=False,
+                )
+                if not leading_data.empty:
+                    downloaded_frames.append(leading_data)
+
             next_of_last = last_date + datetime.timedelta(days=1)
-            missing_business_dates = pd.bdate_range(
+            trailing_business_dates = pd.bdate_range(
                 start=next_of_last,
                 end=end_date,
                 inclusive='left',
@@ -40,17 +64,21 @@ class StockService:
             # yfinance treats end as exclusive. Avoid empty requests such as
             # [2026-08-12, 2026-08-12), and do not query on weekends when the
             # cache already contains the latest trading day.
-            if next_of_last < end_date and not missing_business_dates.empty:
-                df_complement = yf.download(stock, start=next_of_last, end=end, multi_level_index=False)
-                
-                # Remove overlapping data
-                overlap = df.index.intersection(df_complement.index)
-                if not overlap.empty:
-                    df_complement = df_complement.loc[~df_complement.index.isin(overlap)]
-                
-                if not df_complement.empty:
-                    df = pd.concat([df, df_complement])
-                    df.to_csv(price_file)
+            if next_of_last < end_date and not trailing_business_dates.empty:
+                trailing_data = yf.download(
+                    stock,
+                    start=next_of_last,
+                    end=end,
+                    multi_level_index=False,
+                )
+                if not trailing_data.empty:
+                    downloaded_frames.append(trailing_data)
+
+            if downloaded_frames:
+                df = pd.concat([df, *downloaded_frames])
+                df.index = pd.to_datetime(df.index)
+                df = df[~df.index.duplicated(keep='last')].sort_index()
+                df.to_csv(price_file)
                     
             df_out = df.reset_index()
             # Filter to requested window for plotting (end is exclusive per yfinance semantics)
