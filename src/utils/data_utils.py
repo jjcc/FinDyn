@@ -1,5 +1,5 @@
 from datetime import datetime
-import os
+from contextlib import closing
 import sqlite3
 from typing import Dict, List, Tuple
 import pandas as pd
@@ -10,7 +10,12 @@ from dotenv import load_dotenv
 from ..config import Config
 
 load_dotenv()
-db = Config.DB_PATH
+
+
+def get_db_connection(db_path=None) -> sqlite3.Connection:
+    """Open a SQLite connection using the centralized application setting."""
+    path = Config.DB_PATH if db_path is None else db_path
+    return sqlite3.connect(path)
 
 def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict, test = False) -> Dict[str, str]:
     ## TODO: develop new stock fetching function based on database
@@ -185,11 +190,9 @@ def get_data_by_list(symbols: List[str],
         raise Exception(f"Error processing data: {str(e)}")
         
 def get_symbols(count:int,start:int = 0)->List[str]:
-    conn = sqlite3.connect('stock_info.db')
     sql = f"SELECT symbol FROM stock_info LIMIT {start}, {count}"
-
-    df = pd.read_sql(sql, conn)
-    conn.close()
+    with closing(get_db_connection()) as conn:
+        df = pd.read_sql(sql, conn)
     return df['symbol'].tolist()
 
 
@@ -200,14 +203,12 @@ def get_symbols_by_page(is_sp500=True, page_length = 100) -> List[str]:
     Returns:
         List of S&P 500 stock symbols
     """
-    db = os.getenv('DB_PATH')
-    conn = sqlite3.connect(db)
     if is_sp500:
         sql = "SELECT symbol FROM stock_info WHERE is_sp500 = 1"
     else:
         sql = "SELECT symbol FROM stock_info WHERE is_sp500 = 0 AND is_sp1500 = 1"
-    df = pd.read_sql(sql, conn)
-    conn.close()
+    with closing(get_db_connection()) as conn:
+        df = pd.read_sql(sql, conn)
     all_list =df['symbol'].tolist()
     # replace any symbol with '.' with '-'
     all_list = [symbol.replace('.','-') for symbol in all_list]
@@ -244,4 +245,4 @@ class Helper:
         # 180 ago
         start_date = today - pd.DateOffset(days=days)
         start_date_str = start_date.strftime('%Y-%m-%d')
-        return start_date_str, today_ex_str   
+        return start_date_str, today_ex_str
