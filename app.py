@@ -1,5 +1,6 @@
 from flask import Flask,send_from_directory 
 from flask_socketio import SocketIO
+from src.config import Config
 from src.routes import routes
 
 # failed to download CTLT
@@ -24,7 +25,7 @@ def static_folder_handler(app):
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key = 'your-secret-key-here'  # Change this to a random secret key in production
+    app.config.from_object(Config)
     socketio = SocketIO(app)
     
     # Register static folder handlers
