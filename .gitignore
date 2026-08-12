@@ -165,3 +165,4 @@ node_modules/
 config.ini
 settings.json
 image/
+*.token
