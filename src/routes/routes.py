@@ -22,6 +22,7 @@ def init_app(app, socketio):
     with open(symbol_map_file, "r") as f:
         symbol_map = json.load(f)
 
+    @app.route('/index.html')
     @app.route('/')
     def index():
         from ..validation import validate_etf_symbol, validate_page_number
@@ -48,14 +49,17 @@ def init_app(app, socketio):
         pagination = Pagination(page=page, total=len(stocks), per_page=per_page, css_framework='bootstrap4')
         return render_template('index.html', stocks=paginated_stocks, etf=etf, pagination=pagination)
 
+    @app.route('/sectors.html')
     @app.route('/sectors')
     def sectors():
         return render_template('sectors.html')
 
+    @app.route('/sectors2.html')
     @app.route('/sectors2')
     def sectors2():
         return render_template('sectors2.html')
 
+    @app.route('/sectors3.html')
     @app.route('/sectors3')
     def sectors3():
         return render_template('sectors3.html')
