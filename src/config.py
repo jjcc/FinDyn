@@ -15,6 +15,9 @@ class Config:
     META_DATA_FOLDER = os.path.join(os.getenv('DATA_FOLDER', 'data'), 'meta')
     PRICE_INFO_FOLDER = os.getenv('PRICE_INFO_FOLDER', 'extra_data/price_info/2025-04_5m')
     EXTRA_DATA_FOLDER = os.getenv('EXTRA_DATA', 'extra_data')
+    ETF_PRICE_DB = os.getenv('ETF_PRICE_DB', os.path.join(DATA_FOLDER, 'etf_prices.sqlite3'))
+    ETF_CHART_FOLDER = os.getenv('ETF_CHART_DIR', os.path.join('image', 'sectors'))
+    TIINGO_API_TOKEN = os.getenv('TIINGO_API_TOKEN', '')
     
     # Stock data folders
     SPDR_FOLDER = os.path.join(META_DATA_FOLDER, 'spdr')

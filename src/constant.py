@@ -5,6 +5,21 @@ ISHARE_SECTOR2_ETF = {"PICK","IEO","RXI","IXG","SLVP","WOOD","IAT","EXI","IDNA",
                       "FILL","VEGI","IFRA","IEDI","EMIF"}
 INDUSTRY_ETFS = {"KBE","KRE","KCE","KIE","XAR","XTN","XBI","XPH","XHE","XHS",
                  "XOP","XES","XME","XRT","XHB","XSD","XSW","XNTK","XITK","XTL"} # not isare
+THEMATIC_ETFS = {"KOMP", "SIMS", "HAIL", "FITE", "ROKT", "CNRG"}
+SMART_BETA_ETFS = {
+    "SPYD", "SDY", "WDIV", "DWX", "EDIV", "QUS", "QWLD", "QEFA", "QEMM",
+    "ONEY", "ONEV", "ONEO", "LGLV", "SMLV", "MMTM", "VLU", "DWFI",
+}
+
+ETF_PRICE_GROUPS = (
+    ("sector", SECTOR_ETFS),
+    ("industry", INDUSTRY_ETFS),
+    ("smart_beta", SMART_BETA_ETFS),
+    ("thematic", THEMATIC_ETFS),
+    ("ishares_sector1", ISHARE_SECTOR1_ETF),
+    ("ishares_sector2", ISHARE_SECTOR2_ETF),
+)
+ETF_PRICE_SYMBOLS = frozenset().union(*(symbols for _, symbols in ETF_PRICE_GROUPS))
 
 # Exact provider exchange labels accepted as US listings. Keep this centralized
 # so the holdings updater and web routes apply the same rule.
