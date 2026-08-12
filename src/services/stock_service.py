@@ -86,9 +86,23 @@ class StockService:
             df_out = df_out[(df_out['Date'] >= start_date) & (df_out['Date'] < end_date)]
             return df_out
             
-        except (IndexError, FileNotFoundError):
+        except (
+            IndexError,
+            FileNotFoundError,
+            ValueError,
+            pd.errors.EmptyDataError,
+            pd.errors.ParserError,
+        ):
+            # Legacy yfinance versions sometimes wrote a three-row
+            # MultiIndex header (Price/Ticker/Date). Such a file exists but
+            # cannot be loaded with Date as its index, so replace it from the
+            # source just as we do for a missing cache.
             df = yf.download(stock, start=start, end=end, multi_level_index=False)
-            df.to_csv(price_file)
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
+            if not df.empty:
+                df.index.name = 'Date'
+                df.to_csv(price_file)
             df_out = df.reset_index()
             return df_out
 

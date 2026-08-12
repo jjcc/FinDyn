@@ -28,10 +28,17 @@ def fetch_stock_data(stocks: List[str], socketio, symbol_map: Dict, test = False
     total_stocks = len(stocks)
     
     for i, stock in enumerate(stocks, start=1):
-        # Fetch and process stock data
-        df = stock_service.get_stock_data_old(stock, None, start, end) #This is the old method not using multi_level index
-        df = stock_service.calculate_emas(df)
-        stock_data[stock] = df
+        try:
+            # Fetch and process stock data
+            df = stock_service.get_stock_data_old(stock, None, start, end)
+            if df.empty or 'Close' not in df.columns:
+                raise ValueError('no usable price data returned')
+            df = stock_service.calculate_emas(df)
+            stock_data[stock] = df
+        except Exception as error:
+            # One stale/delisted symbol should not prevent the remaining ETF
+            # charts from loading or leave the progress bar unfinished.
+            print(f"Skipping {stock}: {error}")
         
         # Send progress update
         progress = int((i / total_stocks) * 100)
