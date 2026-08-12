@@ -78,3 +78,37 @@ def test_requested_history_before_cache_is_backfilled(tmp_path, monkeypatch):
     # The overlapping August 10 row returned by Yahoo replaces rather than
     # duplicates the cached row.
     assert result.loc[result['Date'] == pd.Timestamp('2026-08-10'), 'Close'].item() == 101.5
+
+
+def test_malformed_multirow_cache_is_refreshed(tmp_path, monkeypatch):
+    monkeypatch.setattr(Config, 'DATA_FOLDER', str(tmp_path))
+    cache_folder = tmp_path / 'SPY'
+    cache_folder.mkdir()
+    cache_file = cache_folder / 'AAPL_last.csv'
+    cache_file.write_text(
+        'Price,Close,High,Low,Open,Volume\n'
+        'Ticker,AAPL,AAPL,AAPL,AAPL,AAPL\n'
+        'Date,,,,,\n'
+    )
+    downloaded = pd.DataFrame(
+        {
+            'Open': [100.0],
+            'High': [102.0],
+            'Low': [99.0],
+            'Close': [101.0],
+            'Volume': [1000],
+        },
+        index=pd.to_datetime(['2026-08-11']),
+    )
+    service = StockService({'AAPL': {'true': 'SPY', 'false': []}})
+
+    with patch(
+        'src.services.stock_service.yf.download', return_value=downloaded
+    ) as download:
+        result = service.get_stock_data_old(
+            'AAPL', None, '2026-08-11', '2026-08-12'
+        )
+
+    download.assert_called_once()
+    assert result['Close'].tolist() == [101.0]
+    assert cache_file.read_text().startswith('Date,Open,High,Low,Close,Volume')
